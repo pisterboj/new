@@ -1,12 +1,1621 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>index5.html</title>
-  </head>
-  <body>
-    <h1>Welcome to index5.html</h1>
-    <p>Created by GitHub Copilot Chat Assistant.</p>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MAN / MYTH / LEGEND</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#0b0b0b;
+  color:#f3f0e8;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+button{font:inherit}
+
+#app{
+  width:100%;
+  height:100%;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 42%,#1b1b1b 0%,#0c0c0c 52%,#070707 100%);
+}
+
+.stage{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+  height:76px;
+  flex:0 0 76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 34px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+  letter-spacing:.12em;
+  font-size:11px;
+  text-transform:uppercase;
+}
+
+.brand{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+.brand span{
+  opacity:.35;
+}
+
+.brand strong{
+  opacity:1;
+}
+
+.chapter{
+  opacity:.42;
+}
+
+/* =========================
+   TIMELINE
+========================= */
+
+.timeline-wrap{
+  position:relative;
+  flex:0 0 128px;
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.timeline-wrap::-webkit-scrollbar{
+  display:none;
+}
+
+.timeline{
+  position:relative;
+  height:128px;
+  width:max(100%,980px);
+  min-width:980px;
+}
+
+.timeline-line{
+  position:absolute;
+  left:4%;
+  right:4%;
+  top:53px;
+  height:1px;
+  background:rgba(255,255,255,.16);
+}
+
+.timeline-progress{
+  position:absolute;
+  left:4%;
+  top:52px;
+  height:3px;
+  width:0;
+  background:#f3f0e8;
+  transition:width .65s cubic-bezier(.22,.8,.24,1);
+}
+
+.timeline-point{
+  position:absolute;
+  top:0;
+  width:72px;
+  height:128px;
+  transform:translateX(-50%);
+  cursor:pointer;
+  z-index:2;
+}
+
+.timeline-dot{
+  position:absolute;
+  left:50%;
+  top:47px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.5);
+  transform:translateX(-50%);
+  transition:
+    width .35s ease,
+    height .35s ease,
+    top .35s ease,
+    background .35s ease,
+    border-color .35s ease,
+    box-shadow .35s ease;
+}
+
+.timeline-point.past .timeline-dot{
+  background:#f3f0e8;
+  border-color:#f3f0e8;
+}
+
+.timeline-point.active{
+  z-index:5;
+}
+
+.timeline-point.active .timeline-dot{
+  width:18px;
+  height:18px;
+  top:43px;
+  background:#f3f0e8;
+  border-color:#f3f0e8;
+  box-shadow:
+    0 0 0 7px rgba(243,240,232,.08),
+    0 0 28px rgba(243,240,232,.18);
+  animation:pointPop .45s cubic-bezier(.2,.9,.25,1);
+}
+
+.timeline-label{
+  position:absolute;
+  top:70px;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:8px;
+  letter-spacing:.14em;
+  color:rgba(255,255,255,.3);
+  transition:color .3s ease;
+}
+
+.timeline-point.active .timeline-label{
+  color:rgba(255,255,255,.72);
+}
+
+.timeline-year{
+  display:block;
+  margin-bottom:3px;
+  font-size:9px;
+  letter-spacing:.12em;
+}
+
+.timeline-place{
+  display:block;
+  font-size:7px;
+  opacity:.7;
+}
+
+/* The physical "sign" */
+
+.timeline-sign{
+  position:absolute;
+  left:50%;
+  top:5px;
+  min-width:112px;
+  padding:7px 11px 8px;
+  transform:
+    translate(-50%,-8px)
+    scale(.72);
+  transform-origin:center bottom;
+  opacity:0;
+  pointer-events:none;
+
+  background:#e9e5da;
+  color:#101010;
+  border:1px solid #101010;
+  box-shadow:
+    4px 4px 0 rgba(0,0,0,.55),
+    0 8px 25px rgba(0,0,0,.22);
+
+  transition:
+    opacity .28s ease,
+    transform .42s cubic-bezier(.18,.9,.22,1);
+}
+
+.timeline-sign:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-7px;
+  width:12px;
+  height:12px;
+  background:#e9e5da;
+  border-right:1px solid #101010;
+  border-bottom:1px solid #101010;
+  transform:translateX(-50%) rotate(45deg);
+}
+
+.timeline-point.active .timeline-sign{
+  opacity:1;
+  transform:
+    translate(-50%,0)
+    scale(1);
+  pointer-events:auto;
+  cursor:pointer;
+}
+
+.sign-year{
+  display:block;
+  font-size:8px;
+  font-weight:bold;
+  letter-spacing:.14em;
+}
+
+.sign-place{
+  display:block;
+  margin-top:2px;
+  font-size:10px;
+  font-weight:bold;
+  letter-spacing:.08em;
+}
+
+.sign-rule{
+  display:block;
+  width:24px;
+  height:1px;
+  margin-top:6px;
+  background:#101010;
+}
+
+/* =========================
+   STORY
+========================= */
+
+.story{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:25px;
+}
+
+.card{
+  width:min(760px,calc(100vw - 50px));
+  min-height:350px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+
+  padding:42px 44px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.018)
+    );
+
+  border:1px solid rgba(255,255,255,.14);
+
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.38);
+
+  transition:
+    opacity .28s ease,
+    transform .45s cubic-bezier(.2,.8,.2,1);
+}
+
+.card.swap{
+  opacity:0;
+  transform:translateY(12px);
+}
+
+.card-kicker{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  opacity:.42;
+}
+
+.card-year{
+  margin-top:17px;
+  font-size:11px;
+  letter-spacing:.18em;
+  opacity:.5;
+}
+
+.card-title{
+  margin-top:18px;
+  font-size:clamp(35px,5vw,68px);
+  line-height:.93;
+  font-weight:700;
+  letter-spacing:-.045em;
+}
+
+.card-body{
+  max-width:570px;
+  margin-top:26px;
+  font-size:17px;
+  line-height:1.55;
+  color:rgba(255,255,255,.62);
+}
+
+.card-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-top:40px;
+  padding-top:20px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+.card-index{
+  font-size:9px;
+  letter-spacing:.15em;
+  opacity:.35;
+}
+
+.card-hint{
+  font-size:8px;
+  letter-spacing:.15em;
+  opacity:.35;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls{
+  width:min(760px,calc(100vw - 50px));
+  display:flex;
+  justify-content:space-between;
+  margin-top:15px;
+}
+
+.nav{
+  appearance:none;
+  background:transparent;
+  color:#f3f0e8;
+  border:0;
+  padding:10px 0;
+  cursor:pointer;
+  font-size:9px;
+  letter-spacing:.15em;
+  opacity:.42;
+}
+
+.nav:hover{
+  opacity:1;
+}
+
+/* =========================
+   CONVERGENCE
+========================= */
+
+.convergence{
+  position:absolute;
+  right:34px;
+  bottom:27px;
+  width:160px;
+  height:90px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .8s ease;
+}
+
+.convergence.show{
+  opacity:.55;
+}
+
+.cone-line{
+  position:absolute;
+  width:130px;
+  height:1px;
+  background:#f3f0e8;
+  transform-origin:left center;
+  left:0;
+  top:44px;
+}
+
+.cone-line:nth-child(1){transform:rotate(-18deg)}
+.cone-line:nth-child(2){transform:rotate(18deg)}
+.cone-line:nth-child(3){transform:rotate(0deg)}
+
+.cone-target{
+  position:absolute;
+  right:0;
+  top:39px;
+  width:11px;
+  height:11px;
+  border:1px solid #f3f0e8;
+  border-radius:50%;
+}
+
+/* =========================
+   EVIDENCE
+========================= */
+
+.evidence-layer{
+  position:absolute;
+  inset:0;
+  z-index:30;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  padding:25px;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(12px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+
+.evidence-layer.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.evidence{
+  width:min(760px,100%);
+  max-height:82vh;
+  overflow:auto;
+  padding:30px;
+  background:#e9e5da;
+  color:#101010;
+  transform:translateY(30px);
+  transition:transform .45s cubic-bezier(.2,.8,.2,1);
+}
+
+.evidence-layer.open .evidence{
+  transform:translateY(0);
+}
+
+.evidence-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:start;
+}
+
+.evidence h2{
+  margin:0;
+  font-size:clamp(25px,4vw,46px);
+  line-height:.95;
+  letter-spacing:-.04em;
+}
+
+.close{
+  border:0;
+  background:none;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.evidence-role{
+  margin-top:25px;
+  font-size:11px;
+  letter-spacing:.15em;
+  font-weight:bold;
+}
+
+.evidence-meta{
+  margin-top:20px;
+  padding-top:20px;
+  border-top:1px solid rgba(0,0,0,.18);
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* =========================
+   TURN CARD
+========================= */
+
+.turn-layer{
+  position:absolute;
+  inset:0;
+  z-index:50;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:rgba(0,0,0,.88);
+  backdrop-filter:blur(14px);
+
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease;
+}
+
+.turn-layer.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.turn-card{
+  width:min(310px,72vw);
+  aspect-ratio:2 / 3;
+  perspective:1200px;
+  transform:translateY(80px) scale(.78) rotate(-5deg);
+  transition:
+    transform .65s cubic-bezier(.15,.9,.2,1);
+}
+
+.turn-layer.open .turn-card{
+  transform:translateY(0) scale(1) rotate(-2deg);
+  animation:unoDrop .7s cubic-bezier(.12,.9,.2,1);
+}
+
+.turn-inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .85s cubic-bezier(.2,.8,.2,1);
+}
+
+.turn-card.flipped .turn-inner{
+  transform:rotateY(180deg);
+}
+
+.turn-face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  overflow:hidden;
+
+  border:5px solid #f3f0e8;
+  border-radius:25px;
+
+  box-shadow:
+    0 35px 100px rgba(0,0,0,.7),
+    0 0 0 1px rgba(0,0,0,.8);
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+/* Front */
+
+.turn-front{
+  background:#b51f29;
+  color:#fff;
+}
+
+.turn-front:before{
+  content:"";
+  position:absolute;
+  width:125%;
+  height:48%;
+  border-radius:50%;
+  background:#f3f0e8;
+  transform:rotate(-24deg);
+  opacity:.98;
+}
+
+.turn-front:after{
+  content:"";
+  position:absolute;
+  width:120%;
+  height:42%;
+  border-radius:50%;
+  border:7px solid #b51f29;
+  transform:rotate(-24deg);
+}
+
+.turn-front > *{
+  position:relative;
+  z-index:2;
+}
+
+.turn-label{
+  font-size:11px;
+  letter-spacing:.25em;
+  font-weight:bold;
+}
+
+.turn-title{
+  margin-top:24px;
+  font-size:clamp(29px,6vw,48px);
+  line-height:.88;
+  font-weight:900;
+  letter-spacing:-.055em;
+}
+
+.turn-sub{
+  margin-top:34px;
+  font-size:8px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  opacity:.75;
+}
+
+/* Back */
+
+.turn-back{
+  transform:rotateY(180deg);
+  background:#101010;
+  color:#f3f0e8;
+  border-color:#b51f29;
+}
+
+.turn-back:before{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:14px;
+}
+
+.turn-back .turn-label{
+  color:#b51f29;
+}
+
+.turn-back .turn-title{
+  font-size:clamp(36px,7vw,58px);
+}
+
+/* =========================
+   FINAL
+========================= */
+
+.final-layer{
+  position:absolute;
+  inset:0;
+  z-index:40;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 50% 45%,#252525,#080808 68%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .8s ease;
+}
+
+.final-layer.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.final{
+  width:min(900px,calc(100vw - 50px));
+  text-align:center;
+}
+
+.final h1{
+  margin:0;
+  font-size:clamp(42px,8vw,100px);
+  line-height:.88;
+  letter-spacing:-.06em;
+}
+
+.final p{
+  max-width:650px;
+  margin:30px auto 0;
+  font-size:18px;
+  line-height:1.5;
+  color:rgba(255,255,255,.55);
+}
+
+.final-return{
+  margin-top:40px;
+  border:1px solid rgba(255,255,255,.25);
+  background:transparent;
+  color:#fff;
+  padding:13px 18px;
+  font-size:9px;
+  letter-spacing:.16em;
+  cursor:pointer;
+}
+
+/* =========================
+   INTRO
+========================= */
+
+.intro{
+  position:absolute;
+  inset:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:#090909;
+  font-size:clamp(34px,7vw,82px);
+  line-height:.9;
+  letter-spacing:-.055em;
+  font-weight:700;
+  padding:30px;
+  cursor:pointer;
+  transition:opacity .8s ease;
+}
+
+.intro.hide{
+  opacity:0;
+  pointer-events:none;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes pointPop{
+  0%{
+    transform:translateX(-50%) scale(.5);
+  }
+  65%{
+    transform:translateX(-50%) scale(1.25);
+  }
+  100%{
+    transform:translateX(-50%) scale(1);
+  }
+}
+
+@keyframes unoDrop{
+  0%{
+    transform:translateY(-180px) scale(.55) rotate(12deg);
+  }
+  55%{
+    transform:translateY(18px) scale(1.04) rotate(-4deg);
+  }
+  75%{
+    transform:translateY(-6px) scale(.99) rotate(-1deg);
+  }
+  100%{
+    transform:translateY(0) scale(1) rotate(-2deg);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+  .header{
+    height:60px;
+    flex-basis:60px;
+    padding:0 18px;
+  }
+
+  .brand{
+    gap:10px;
+    font-size:9px;
+  }
+
+  .chapter{
+    font-size:8px;
+  }
+
+  .timeline-wrap{
+    flex-basis:120px;
+  }
+
+  .timeline{
+    height:120px;
+    min-width:920px;
+  }
+
+  .story{
+    padding:16px;
+  }
+
+  .card{
+    width:100%;
+    min-height:330px;
+    padding:29px 26px;
+  }
+
+  .card-title{
+    font-size:42px;
+  }
+
+  .card-body{
+    font-size:15px;
+  }
+
+  .card-footer{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+
+  .controls{
+    width:100%;
+  }
+
+  .convergence{
+    display:none;
+  }
+
+  .evidence-layer{
+    padding:12px;
+  }
+
+  .evidence{
+    padding:23px;
+    max-height:86vh;
+  }
+
+  .timeline-sign{
+    min-width:100px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <div class="stage">
+
+    <header class="header">
+      <div class="brand">
+        <strong>MAN</strong>
+        <span>/</span>
+        <span>MYTH</span>
+        <span>/</span>
+        <span>LEGEND</span>
+      </div>
+
+      <div class="chapter" id="chapter">
+        THE RECORD
+      </div>
+    </header>
+
+    <div class="timeline-wrap" id="timelineWrap">
+      <div class="timeline" id="timeline">
+        <div class="timeline-line"></div>
+        <div class="timeline-progress" id="progress"></div>
+      </div>
+    </div>
+
+    <main class="story">
+
+      <section class="card" id="card">
+
+        <div>
+
+          <div class="card-kicker" id="kicker">
+            THE RECORD
+          </div>
+
+          <div class="card-year" id="year">
+            2010
+          </div>
+
+          <div class="card-title" id="title">
+            LOW VELOCITY.<br>
+            HIGH LEVERAGE.
+          </div>
+
+          <div class="card-body" id="body">
+            Legal precision inside systems that move slowly.
+          </div>
+
+        </div>
+
+        <div class="card-footer">
+
+          <div class="card-index" id="index">
+            01 / 12
+          </div>
+
+          <div class="card-hint">
+            TAP THE SIGN FOR PROOF
+          </div>
+
+        </div>
+
+      </section>
+
+      <div class="controls">
+        <button class="nav" id="prev">← PREVIOUS</button>
+        <button class="nav" id="next">NEXT →</button>
+      </div>
+
+    </main>
+
+    <div class="convergence" id="convergence">
+      <div class="cone-line"></div>
+      <div class="cone-line"></div>
+      <div class="cone-line"></div>
+      <div class="cone-target"></div>
+    </div>
+
+  </div>
+
+  <!-- EVIDENCE -->
+
+  <div class="evidence-layer" id="evidenceLayer">
+
+    <div class="evidence">
+
+      <div class="evidence-top">
+        <h2 id="evidenceTitle">THE HAGUE</h2>
+        <button class="close" id="closeEvidence">×</button>
+      </div>
+
+      <div class="evidence-role" id="evidenceRole">
+        INTERNATIONAL ATTORNEY
+      </div>
+
+      <div class="evidence-meta" id="evidenceMeta">
+        Evidence.
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- THE TURN -->
+
+  <div class="turn-layer" id="turnLayer">
+
+    <div class="turn-card" id="turnCard">
+
+      <div class="turn-inner">
+
+        <div class="turn-face turn-front">
+
+          <div class="turn-label">
+            THE TURN
+          </div>
+
+          <div class="turn-title">
+            THE CV WAS<br>
+            NEVER THE STORY.
+          </div>
+
+          <div class="turn-sub">
+            TAP TO TURN
+          </div>
+
+        </div>
+
+        <div class="turn-face turn-back">
+
+          <div class="turn-label">
+            THE PATTERN
+          </div>
+
+          <div class="turn-title">
+            THE PATTERN<br>
+            WAS.
+          </div>
+
+          <div class="turn-sub">
+            Different fields.<br>
+            Different problems.<br>
+            Increasingly the same operating system.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FINAL -->
+
+  <div class="final-layer" id="finalLayer">
+
+    <div class="final">
+
+      <h1>
+        GIVE ME THE<br>
+        PROBLEM WORTH<br>
+        SOLVING.
+      </h1>
+
+      <p>
+        Years of different problems became one increasingly useful
+        way of working.
+      </p>
+
+      <button class="final-return" id="finalReturn">
+        RETURN TO THE RECORD
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- INTRO -->
+
+  <div class="intro" id="intro">
+    MY CV WASN'T READY.<br>
+    I AM.
+  </div>
+
+</div>
+
+
+<script>
+
+const entries = [
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2010",
+    place:"JUSTICE",
+    title:"LOW VELOCITY.<br>HIGH LEVERAGE.",
+    body:"Legal precision inside systems that move slowly.",
+    evidenceTitle:"MINISTRY OF JUSTICE",
+    role:"LEGAL PRECISION",
+    meta:"2010–2015 · Slovakia<br><br>Legal precision inside public systems where constraints mattered as much as the answer.<br><br><strong>PRECISION UNDER CONSTRAINT.</strong>"
+  },
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2015",
+    place:"GOVERNMENT",
+    title:"MAKE THE<br>DECISION MOVE.",
+    body:"Advising institutions where the legal answer was only the beginning.",
+    evidenceTitle:"MINISTERIAL ADVISORY",
+    role:"MINISTERIAL ADVISOR",
+    meta:"2015+ · Slovakia<br><br>Counselled ministers and decision-makers where law, politics and execution met.<br><br><strong>DECISION UNDER CONSTRAINT.</strong>"
+  },
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2019",
+    place:"THE HAGUE",
+    title:"FORMAL<br>NEGOTIATION.",
+    body:"Representing Slovakia and EU Member States where every word had consequences.",
+    evidenceTitle:"HCCH JUDGMENTS CONVENTION",
+    role:"INTERNATIONAL ATTORNEY",
+    meta:"18 JUN – 2 JUL 2019 · Peace Palace · The Hague<br><br>Negotiated on behalf of the Slovak Republic and EU Member States at the 22nd Diplomatic Session of the HCCH.<br><br><strong>CONVENTION ADOPTED · 2 JUL 2019.</strong>"
+  },
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2021",
+    place:"COVID",
+    title:"MAKE THE<br>MACHINE WORK.",
+    body:"When an existing mechanism stopped moving, I built another one.",
+    evidenceTitle:"COVID CONTRACT MECHANISM",
+    role:"MECHANISM DESIGN",
+    meta:"2021 · Slovakia<br><br>Mass-contract adoption mechanism designed to help struggling creative professionals navigate the disruption.<br><br><strong>TURNING DEADLOCK INTO MOTION.</strong>"
+  },
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2022",
+    place:"ARTS",
+    title:"HELP THEM<br>MOVE.",
+    body:"Strategy, structure and execution where the bottleneck mattered most.",
+    evidenceTitle:"ACADEMY OF FINE ARTS",
+    role:"STRATEGY / SYSTEMS",
+    meta:"2022–2024 · Bratislava<br><br>Strategy, culture, technology and execution across a creative institution.<br><br><strong>STRUCTURE FOR CREATIVE WORK.</strong>"
+  },
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2023",
+    place:"CULTURE",
+    title:"WHEN THE INSTITUTION<br>STOPS LISTENING.",
+    body:"Build the pressure, find the people, create another channel.",
+    evidenceTitle:"OTVORENÁ KULTÚRA!",
+    role:"CIVIC / STRATEGIC COORDINATION",
+    meta:"2023–PRESENT · Slovakia<br><br>Culture policy, advocacy and stakeholder coordination.<br><br><strong>BUILDING ANOTHER CHANNEL.</strong>"
+  },
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2024",
+    place:"MINISTRY",
+    title:"BUILD THE<br>OTHER CHANNEL.",
+    body:"When the formal system cannot carry the problem, change the mechanism.",
+    evidenceTitle:"MINISTRY OF CULTURE",
+    role:"DIRECTOR",
+    meta:"2023–2024 · Slovakia<br><br>Director-level institutional work where structural constraints required a different operating mechanism.<br><br><strong>INSTITUTIONAL LEVERAGE.</strong>"
+  },
+
+  {
+    chapter:"THE RECORD",
+    kicker:"MAN",
+    year:"2025",
+    place:"GAMES",
+    title:"THE SAME<br>OPERATING SYSTEM.",
+    body:"Different field. Same instinct for finding the bottleneck.",
+    evidenceTitle:"GAME STUDIOS / CULTURAL TECHNOLOGY",
+    role:"STRATEGY / GAME DEVELOPMENT",
+    meta:"2025+ · Europe<br><br>Strategic and systems thinking applied to game development and cultural technology.<br><br><strong>SYSTEMS → CREATIVE TECHNOLOGY.</strong>"
+  },
+
+  {
+    chapter:"THE MYTH",
+    kicker:"PATTERN / 01",
+    year:"01",
+    place:"FIND FRICTION",
+    title:"FIND THE<br>FRICTION.",
+    body:"The problem is rarely where the system says it is.",
+    evidenceTitle:"THE FIRST MOVE",
+    role:"DIAGNOSIS",
+    meta:"OPERATING SYSTEM<br><br>Locate the actual constraint before attempting to solve the stated problem.<br><br><strong>FIND THE REAL BOTTLENECK.</strong>"
+  },
+
+  {
+    chapter:"THE MYTH",
+    kicker:"SYSTEM / 02",
+    year:"02",
+    place:"MAP SYSTEM",
+    title:"MAP THE<br>SYSTEM.",
+    body:"Understand people, incentives and constraints before moving anything.",
+    evidenceTitle:"SYSTEM MAPPING",
+    role:"SYSTEMS THINKING",
+    meta:"OPERATING SYSTEM<br><br>Law. Institutions. Stakeholders. Technology. Narrative.<br><br><strong>SEE THE WHOLE MACHINE.</strong>"
+  },
+
+  {
+    chapter:"THE MYTH",
+    kicker:"AGENCY / 03",
+    year:"03",
+    place:"MOVE WHAT MATTERS",
+    title:"MOVE WHAT<br>MATTERS.",
+    body:"Turn ambiguity into a sequence of decisions.",
+    evidenceTitle:"LOW VELOCITY / HIGH LEVERAGE",
+    role:"STRATEGIC OPERATOR",
+    meta:"2026 · OPERATING SYSTEM<br><br>Accumulated skill in identifying the constraint, sequencing decisions and moving the highest-leverage piece.<br><br><strong>LOW VELOCITY · HIGH LEVERAGE.</strong>"
+  },
+
+  {
+    chapter:"THE LEGEND",
+    kicker:"UMIVERSE / 2026",
+    year:"NOW",
+    place:"CONE OF AGENCY",
+    title:"GIVE ME THE<br>PROBLEM WORTH<br>SOLVING.",
+    body:"Years of different problems became one increasingly useful way of working.",
+    evidenceTitle:"CURRENT OPERATING RANGE",
+    role:"CHIEF OF STAFF / STRATEGIC OPERATOR",
+    meta:"NOW · Europe / Global<br><br>Law · Government · Culture · Technology · Games · Applied metacognition.<br><br><strong>CONE OF AGENCY.</strong>"
+  }
+
+];
+
+
+let current = 0;
+let pendingTarget = 8;
+let touchStartX = null;
+
+
+/* =========================
+   DOM
+========================= */
+
+const card = document.getElementById("card");
+const kicker = document.getElementById("kicker");
+const year = document.getElementById("year");
+const title = document.getElementById("title");
+const body = document.getElementById("body");
+const index = document.getElementById("index");
+const chapter = document.getElementById("chapter");
+
+const timeline = document.getElementById("timeline");
+const timelineWrap = document.getElementById("timelineWrap");
+const progress = document.getElementById("progress");
+
+const evidenceLayer = document.getElementById("evidenceLayer");
+const evidenceTitle = document.getElementById("evidenceTitle");
+const evidenceRole = document.getElementById("evidenceRole");
+const evidenceMeta = document.getElementById("evidenceMeta");
+
+const turnLayer = document.getElementById("turnLayer");
+const turnCard = document.getElementById("turnCard");
+
+const convergence = document.getElementById("convergence");
+const finalLayer = document.getElementById("finalLayer");
+
+const intro = document.getElementById("intro");
+
+
+/* =========================
+   TIMELINE
+========================= */
+
+function buildTimeline(){
+
+  timeline.querySelectorAll(".timeline-point").forEach(el=>el.remove());
+
+  entries.forEach((entry,i)=>{
+
+    const point = document.createElement("div");
+
+    point.className = "timeline-point";
+
+    point.style.left =
+      (4 + ((92 / (entries.length - 1)) * i)) + "%";
+
+    point.innerHTML = `
+      <div class="timeline-sign">
+        <span class="sign-year">${entry.year}</span>
+        <span class="sign-place">${entry.place}</span>
+        <span class="sign-rule"></span>
+      </div>
+
+      <div class="timeline-dot"></div>
+
+      <div class="timeline-label">
+        <span class="timeline-year">${entry.year}</span>
+        <span class="timeline-place">${entry.place}</span>
+      </div>
+    `;
+
+    point.addEventListener("click",()=>{
+
+      if(i === current){
+
+        openEvidence(i);
+
+      }else{
+
+        go(i);
+
+      }
+
+    });
+
+    timeline.appendChild(point);
+
+  });
+
+}
+
+
+/* =========================
+   ACTIVE POINT
+========================= */
+
+function focusActivePoint(){
+
+  const point =
+    timeline.querySelectorAll(".timeline-point")[current];
+
+  if(!point) return;
+
+  if(window.innerWidth <= 700){
+
+    point.scrollIntoView({
+      behavior:"smooth",
+      inline:"center",
+      block:"nearest"
+    });
+
+  }
+
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render(){
+
+  const entry = entries[current];
+
+  card.classList.add("swap");
+
+  setTimeout(()=>{
+
+    kicker.textContent = entry.kicker;
+    year.textContent = entry.year;
+    title.innerHTML = entry.title;
+    body.textContent = entry.body;
+
+    index.textContent =
+      String(current + 1).padStart(2,"0")
+      + " / "
+      + entries.length;
+
+    chapter.textContent = entry.chapter;
+
+    card.classList.remove("swap");
+
+  },150);
+
+
+  const points =
+    timeline.querySelectorAll(".timeline-point");
+
+  points.forEach((point,i)=>{
+
+    point.classList.toggle(
+      "active",
+      i === current
+    );
+
+    point.classList.toggle(
+      "past",
+      i < current
+    );
+
+  });
+
+
+  const percentage =
+    (current / (entries.length - 1)) * 92;
+
+  progress.style.width =
+    percentage + "%";
+
+
+  if(current >= 8){
+    convergence.classList.add("show");
+  }else{
+    convergence.classList.remove("show");
+  }
+
+
+  if(current === entries.length - 1){
+
+    setTimeout(()=>{
+      finalLayer.classList.add("open");
+    },700);
+
+  }else{
+
+    finalLayer.classList.remove("open");
+
+  }
+
+
+  requestAnimationFrame(focusActivePoint);
+
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function go(i){
+
+  i = Math.max(
+    0,
+    Math.min(entries.length - 1,i)
+  );
+
+  if(
+    current < 8 &&
+    i >= 8
+  ){
+
+    pendingTarget = i;
+
+    showTurn();
+
+    return;
+
+  }
+
+  current = i;
+
+  render();
+
+}
+
+
+document.getElementById("next")
+  .addEventListener("click",()=>go(current + 1));
+
+document.getElementById("prev")
+  .addEventListener("click",()=>go(current - 1));
+
+
+/* =========================
+   EVIDENCE
+========================= */
+
+function openEvidence(i){
+
+  const entry = entries[i];
+
+  evidenceTitle.textContent =
+    entry.evidenceTitle;
+
+  evidenceRole.textContent =
+    entry.role;
+
+  evidenceMeta.innerHTML =
+    entry.meta;
+
+  evidenceLayer.classList.add("open");
+
+}
+
+
+function closeEvidence(){
+
+  evidenceLayer.classList.remove("open");
+
+}
+
+
+document
+  .getElementById("closeEvidence")
+  .addEventListener("click",closeEvidence);
+
+evidenceLayer.addEventListener("click",(e)=>{
+
+  if(e.target === evidenceLayer){
+    closeEvidence();
+  }
+
+});
+
+
+/* =========================
+   TURN
+========================= */
+
+function showTurn(){
+
+  turnCard.classList.remove("flipped");
+
+  turnLayer.classList.add("open");
+
+}
+
+
+turnCard.addEventListener("click",()=>{
+
+  if(turnCard.classList.contains("flipped"))
+    return;
+
+  turnCard.classList.add("flipped");
+
+  setTimeout(()=>{
+
+    turnLayer.classList.remove("open");
+
+    current = pendingTarget;
+
+    render();
+
+  },900);
+
+});
+
+
+/* =========================
+   FINAL RETURN
+========================= */
+
+document
+  .getElementById("finalReturn")
+  .addEventListener("click",()=>{
+
+    finalLayer.classList.remove("open");
+
+    current = 0;
+
+    render();
+
+    timelineWrap.scrollTo({
+      left:0,
+      behavior:"smooth"
+    });
+
+  });
+
+
+/* =========================
+   KEYBOARD
+========================= */
+
+document.addEventListener("keydown",(e)=>{
+
+  if(e.key === "ArrowRight"){
+    go(current + 1);
+  }
+
+  if(e.key === "ArrowLeft"){
+    go(current - 1);
+  }
+
+  if(e.key === "Escape"){
+
+    closeEvidence();
+
+    turnLayer.classList.remove("open");
+
+    finalLayer.classList.remove("open");
+
+  }
+
+});
+
+
+/* =========================
+   SWIPE
+========================= */
+
+document.addEventListener("pointerdown",(e)=>{
+
+  touchStartX = e.clientX;
+
+});
+
+
+document.addEventListener("pointerup",(e)=>{
+
+  if(touchStartX === null)
+    return;
+
+  if(
+    evidenceLayer.classList.contains("open") ||
+    turnLayer.classList.contains("open") ||
+    finalLayer.classList.contains("open")
+  ){
+
+    touchStartX = null;
+    return;
+
+  }
+
+  const dx =
+    e.clientX - touchStartX;
+
+  if(Math.abs(dx) > 55){
+
+    if(dx < 0){
+      go(current + 1);
+    }else{
+      go(current - 1);
+    }
+
+  }
+
+  touchStartX = null;
+
+});
+
+
+/* =========================
+   INTRO
+========================= */
+
+function dismissIntro(){
+
+  intro.classList.add("hide");
+
+}
+
+intro.addEventListener(
+  "click",
+  dismissIntro
+);
+
+setTimeout(
+  dismissIntro,
+  3500
+);
+
+
+/* =========================
+   INIT
+========================= */
+
+buildTimeline();
+render();
+
+</script>
+
+</body>
 </html>
