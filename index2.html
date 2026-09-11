@@ -1,12 +1,1226 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>index2.html</title>
-  </head>
-  <body>
-    <h1>Welcome to index2.html</h1>
-    <p>Created by GitHub Copilot Chat Assistant.</p>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MAN / MYTH / LEGEND — Stevo Majernik</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#111;
+  color:#eee;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  touch-action:none;
+  user-select:none;
+}
+
+button{
+  font:inherit;
+  color:inherit;
+}
+
+#app{
+  width:100%;
+  height:100%;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 45%,#202020 0%,#111 62%,#080808 100%);
+}
+
+.stage{
+  width:min(1180px,100%);
+  height:100%;
+  margin:auto;
+  position:relative;
+  padding:24px 34px;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ---------- HEADER ---------- */
+
+.header{
+  height:54px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  position:relative;
+  z-index:5;
+}
+
+.logo{
+  font-size:13px;
+  letter-spacing:.24em;
+  font-weight:700;
+}
+
+.chapter{
+  font-size:11px;
+  letter-spacing:.18em;
+  opacity:.48;
+}
+
+/* ---------- TIMELINE ---------- */
+
+.timeline-wrap{
+  position:absolute;
+  left:34px;
+  right:34px;
+  top:92px;
+  height:86px;
+  z-index:4;
+}
+
+.timeline{
+  position:relative;
+  height:100%;
+}
+
+.timeline-line{
+  position:absolute;
+  left:0;
+  right:0;
+  top:25px;
+  height:1px;
+  background:#444;
+}
+
+.timeline-progress{
+  position:absolute;
+  left:0;
+  top:24px;
+  height:3px;
+  width:0;
+  background:#eee;
+  transition:width .65s cubic-bezier(.2,.8,.2,1);
+}
+
+.timeline-point{
+  position:absolute;
+  top:17px;
+  width:17px;
+  height:17px;
+  transform:translateX(-50%);
+  cursor:pointer;
+  z-index:2;
+}
+
+.timeline-dot{
+  width:9px;
+  height:9px;
+  margin:4px;
+  border:1px solid #777;
+  border-radius:50%;
+  background:#111;
+  transition:.35s ease;
+}
+
+.timeline-point:hover .timeline-dot{
+  transform:scale(1.5);
+  border-color:#fff;
+}
+
+.timeline-point.active .timeline-dot{
+  background:#fff;
+  border-color:#fff;
+  transform:scale(1.55);
+}
+
+.timeline-point.past .timeline-dot{
+  background:#777;
+  border-color:#aaa;
+}
+
+.timeline-label{
+  position:absolute;
+  top:38px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  white-space:nowrap;
+  opacity:.28;
+  transition:.4s ease;
+}
+
+.timeline-year{
+  font-size:9px;
+  letter-spacing:.12em;
+  font-weight:bold;
+}
+
+.timeline-place{
+  margin-top:4px;
+  font-size:8px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.timeline-point.active .timeline-label{
+  opacity:1;
+}
+
+.timeline-point.active .timeline-year{
+  font-size:10px;
+}
+
+.timeline-point.active .timeline-place{
+  color:#fff;
+}
+
+.timeline-spine{
+  position:absolute;
+  right:0;
+  top:0;
+  font-size:8px;
+  letter-spacing:.16em;
+  opacity:.35;
+}
+
+/* ---------- STORY ---------- */
+
+.story{
+  width:min(760px,100%);
+  margin:auto;
+  position:relative;
+  z-index:2;
+  padding-top:90px;
+}
+
+.card{
+  min-height:400px;
+  border:1px solid #393939;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  position:relative;
+  padding:44px 48px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  box-shadow:0 25px 80px rgba(0,0,0,.35);
+  transition:transform .35s ease,opacity .35s ease;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(255,255,255,.035);
+  pointer-events:none;
+}
+
+.card-kicker{
+  font-size:10px;
+  letter-spacing:.22em;
+  opacity:.42;
+  text-transform:uppercase;
+}
+
+.card-year{
+  position:absolute;
+  top:39px;
+  right:46px;
+  font-size:10px;
+  letter-spacing:.18em;
+  opacity:.4;
+}
+
+.card-title{
+  margin-top:70px;
+  max-width:650px;
+  font-size:clamp(31px,5vw,58px);
+  line-height:.94;
+  letter-spacing:-.045em;
+  text-transform:uppercase;
+}
+
+.card-body{
+  margin-top:30px;
+  max-width:570px;
+  font-size:15px;
+  line-height:1.55;
+  color:#aaa;
+}
+
+.card-vector{
+  margin-top:24px;
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#777;
+}
+
+.card-vector strong{
+  color:#eee;
+  font-weight:normal;
+}
+
+.controls{
+  margin-top:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.nav{
+  border:1px solid #3c3c3c;
+  background:#151515;
+  padding:10px 16px;
+  font-size:10px;
+  letter-spacing:.15em;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.nav:hover{
+  background:#242424;
+  border-color:#777;
+}
+
+.position{
+  font-size:9px;
+  letter-spacing:.15em;
+  opacity:.3;
+}
+
+/* ---------- CONVERGENCE ---------- */
+
+.convergence{
+  position:absolute;
+  left:50%;
+  bottom:16%;
+  width:520px;
+  height:190px;
+  transform:translateX(-50%);
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .7s ease;
+}
+
+.convergence.show{
+  opacity:1;
+}
+
+.cone-line{
+  position:absolute;
+  left:0;
+  width:100%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#666,#fff);
+  transform-origin:left center;
+}
+
+.cone-line:nth-child(1){top:20px;transform:rotate(9deg)}
+.cone-line:nth-child(2){top:58px;transform:rotate(4deg)}
+.cone-line:nth-child(3){top:98px;transform:rotate(0deg)}
+.cone-line:nth-child(4){top:138px;transform:rotate(-4deg)}
+.cone-line:nth-child(5){top:176px;transform:rotate(-9deg)}
+
+.cone-target{
+  position:absolute;
+  right:0;
+  top:50%;
+  width:13px;
+  height:13px;
+  border:1px solid #fff;
+  border-radius:50%;
+  transform:translateY(-50%);
+}
+
+.cone-label{
+  position:absolute;
+  right:25px;
+  top:calc(50% + 17px);
+  font-size:8px;
+  letter-spacing:.18em;
+  opacity:.5;
+}
+
+/* ---------- TURN OVERLAY ---------- */
+
+.turn-layer{
+  position:absolute;
+  inset:0;
+  background:rgba(5,5,5,.92);
+  z-index:30;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s;
+}
+
+.turn-layer.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.uno{
+  width:min(300px,72vw);
+  aspect-ratio:2/3;
+  perspective:1200px;
+  cursor:pointer;
+}
+
+.uno-inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .75s cubic-bezier(.2,.8,.2,1);
+}
+
+.uno.flipped .uno-inner{
+  transform:rotateY(180deg);
+}
+
+.uno-face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  border-radius:22px;
+  border:4px solid #eee;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  overflow:hidden;
+  box-shadow:0 35px 90px rgba(0,0,0,.7);
+}
+
+.uno-front{
+  background:#b21f26;
+}
+
+.uno-front::before{
+  content:"";
+  position:absolute;
+  width:220%;
+  height:65%;
+  background:#eee;
+  border-radius:50%;
+  transform:rotate(-25deg);
+  opacity:.98;
+}
+
+.uno-front::after{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:52%;
+  background:#b21f26;
+  border-radius:50%;
+  transform:rotate(-25deg);
+}
+
+.uno-logo{
+  position:relative;
+  z-index:2;
+  font-size:68px;
+  font-weight:900;
+  font-style:italic;
+  text-shadow:4px 4px 0 rgba(0,0,0,.3);
+}
+
+.uno-turn{
+  position:relative;
+  z-index:2;
+  margin-top:15px;
+  font-size:11px;
+  letter-spacing:.25em;
+  font-weight:bold;
+}
+
+.uno-back{
+  transform:rotateY(180deg);
+  background:#161616;
+  border-color:#b21f26;
+  padding:32px;
+}
+
+.uno-back .back-label{
+  font-size:10px;
+  letter-spacing:.3em;
+  color:#b21f26;
+  font-weight:bold;
+}
+
+.uno-back h2{
+  margin:28px 0 20px;
+  font-size:32px;
+  line-height:1;
+  letter-spacing:-.04em;
+  text-transform:uppercase;
+}
+
+.uno-back p{
+  max-width:215px;
+  color:#aaa;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.uno-back .flip-prompt{
+  margin-top:30px;
+  font-size:8px;
+  letter-spacing:.2em;
+  opacity:.35;
+}
+
+/* ---------- FINAL ---------- */
+
+.final-layer{
+  position:absolute;
+  inset:0;
+  background:#0c0c0c;
+  z-index:25;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .7s;
+}
+
+.final-layer.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.operator{
+  width:min(620px,88vw);
+  border:1px solid #3a3a3a;
+  padding:42px;
+  position:relative;
+  background:
+    linear-gradient(145deg,#171717,#0e0e0e);
+}
+
+.operator::after{
+  content:"OPERATOR / 2026";
+  position:absolute;
+  right:20px;
+  top:18px;
+  font-size:8px;
+  letter-spacing:.2em;
+  opacity:.3;
+}
+
+.operator-photo{
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  border:1px solid #555;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:8px;
+  letter-spacing:.12em;
+  opacity:.5;
+  margin-bottom:30px;
+  overflow:hidden;
+}
+
+.operator-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.operator-name{
+  font-size:clamp(34px,7vw,62px);
+  letter-spacing:-.055em;
+  line-height:.9;
+  text-transform:uppercase;
+}
+
+.operator-role{
+  margin-top:16px;
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:#aaa;
+}
+
+.operator-line{
+  margin-top:36px;
+  font-size:20px;
+  line-height:1.25;
+  max-width:470px;
+}
+
+.operator-signals{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:28px;
+}
+
+.signal{
+  border:1px solid #383838;
+  padding:7px 9px;
+  font-size:8px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#999;
+}
+
+.operator-cta{
+  margin-top:42px;
+  font-size:11px;
+  letter-spacing:.22em;
+  font-weight:bold;
+}
+
+.return{
+  margin-top:22px;
+  border:0;
+  background:none;
+  padding:0;
+  font-size:9px;
+  letter-spacing:.18em;
+  opacity:.4;
+  cursor:pointer;
+}
+
+/* ---------- INTRO ---------- */
+
+.intro{
+  position:absolute;
+  inset:0;
+  z-index:50;
+  background:#0b0b0b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  cursor:pointer;
+  transition:opacity .7s ease;
+}
+
+.intro.hide{
+  opacity:0;
+  pointer-events:none;
+}
+
+.intro-main{
+  font-size:clamp(38px,8vw,90px);
+  line-height:.86;
+  letter-spacing:-.06em;
+  text-transform:uppercase;
+}
+
+.intro-sub{
+  margin-top:35px;
+  font-size:9px;
+  letter-spacing:.28em;
+  opacity:.38;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:700px){
+
+  .stage{
+    padding:18px 18px;
+  }
+
+  .timeline-wrap{
+    left:18px;
+    right:18px;
+    top:78px;
+    height:72px;
+  }
+
+  .timeline-line{
+    top:22px;
+  }
+
+  .timeline-progress{
+    top:21px;
+  }
+
+  .timeline-point{
+    top:14px;
+  }
+
+  .timeline-label{
+    top:35px;
+  }
+
+  .timeline-place{
+    display:none;
+  }
+
+  .timeline-point:not(.active) .timeline-label{
+    opacity:0;
+  }
+
+  .story{
+    padding-top:100px;
+  }
+
+  .card{
+    min-height:390px;
+    padding:32px 26px;
+  }
+
+  .card-year{
+    top:30px;
+    right:26px;
+  }
+
+  .card-title{
+    margin-top:58px;
+    font-size:clamp(32px,10vw,48px);
+  }
+
+  .card-body{
+    font-size:14px;
+  }
+
+  .controls{
+    margin-top:12px;
+  }
+
+  .convergence{
+    width:92vw;
+    bottom:13%;
+  }
+
+  .operator{
+    padding:28px;
+  }
+
+  .operator-line{
+    font-size:18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <div class="stage">
+
+    <header class="header">
+      <div class="logo" id="sectionLabel">MAN</div>
+      <div class="chapter" id="counter">01 / 12</div>
+    </header>
+
+    <div class="timeline-wrap">
+      <div class="timeline" id="timeline">
+        <div class="timeline-line"></div>
+        <div class="timeline-progress" id="timelineProgress"></div>
+      </div>
+      <div class="timeline-spine">CAREER SPINE</div>
+    </div>
+
+    <main class="story">
+
+      <article class="card" id="card">
+        <div>
+          <div class="card-kicker" id="kicker"></div>
+          <div class="card-year" id="year"></div>
+          <div class="card-title" id="title"></div>
+          <div class="card-body" id="body"></div>
+          <div class="card-vector" id="vector"></div>
+        </div>
+
+        <div class="controls">
+          <button class="nav" id="prev">← PREV</button>
+          <div class="position" id="position">01 / 12</div>
+          <button class="nav" id="next">NEXT →</button>
+        </div>
+      </article>
+
+    </main>
+
+    <div class="convergence" id="convergence">
+      <div class="cone-line"></div>
+      <div class="cone-line"></div>
+      <div class="cone-line"></div>
+      <div class="cone-line"></div>
+      <div class="cone-line"></div>
+      <div class="cone-target"></div>
+      <div class="cone-label">AGENCY</div>
+    </div>
+
+  </div>
+
+  <!-- THE TURN -->
+  <div class="turn-layer" id="turnLayer">
+    <div class="uno" id="uno">
+      <div class="uno-inner">
+
+        <div class="uno-face uno-front">
+          <div class="uno-logo">UNO</div>
+          <div class="uno-turn">THE TURN</div>
+        </div>
+
+        <div class="uno-face uno-back">
+          <div class="back-label">THE TURN</div>
+
+          <h2>The chronology<br>was never<br>the story.</h2>
+
+          <p>
+            The fields changed.<br>
+            The problems didn't.
+          </p>
+
+          <p>
+            Find the bottleneck.<br>
+            Build the mechanism.<br>
+            Make the system move.
+          </p>
+
+          <div class="flip-prompt">TAP TO ENTER MYTH</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- OPERATOR CARD -->
+  <div class="final-layer" id="finalLayer">
+
+    <div class="operator">
+
+      <div class="operator-photo">
+        PHOTO
+      </div>
+
+      <div class="operator-name">
+        STEVO<br>MAJERNIK
+      </div>
+
+      <div class="operator-role">
+        Strategic Operator · Chief of Staff
+      </div>
+
+      <div class="operator-line">
+        I make stuck systems move.
+      </div>
+
+      <div class="operator-signals">
+        <span class="signal">LAW</span>
+        <span class="signal">GOVERNMENT</span>
+        <span class="signal">CULTURE</span>
+        <span class="signal">NEGOTIATION</span>
+        <span class="signal">TECHNOLOGY</span>
+        <span class="signal">GAME DESIGN</span>
+        <span class="signal">METACOGNITION</span>
+      </div>
+
+      <div class="operator-cta">
+        GIVE ME THE PROBLEM WORTH SOLVING.
+      </div>
+
+      <button class="return" id="return">
+        ← RETURN TO STORY
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro" id="intro">
+    <div>
+      <div class="intro-main">
+        MY CV<br>
+        WASN'T READY.<br>
+        <span>I AM.</span>
+      </div>
+
+      <div class="intro-sub">
+        PROOF OF WORK · TAP / CLICK / SWIPE
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const cards = [
+
+  {
+    section:"MAN",
+    year:"2010",
+    place:"MINISTRY OF JUSTICE",
+    title:"LOW VELOCITY.<br>HIGH LEVERAGE.",
+    body:"Legal precision inside public systems. Learn how institutions actually move — and where they don't.",
+    vector:"CAPABILITY · <strong>PRECISION</strong>"
+  },
+
+  {
+    section:"MAN",
+    year:"2019",
+    place:"THE HAGUE",
+    title:"FORMAL<br>NEGOTIATION.",
+    body:"Negotiated on behalf of Slovakia and EU Member States at the HCCH Judgments Convention diplomatic session.",
+    vector:"CAPABILITY · <strong>NEGOTIATION</strong>"
+  },
+
+  {
+    section:"MAN",
+    year:"2021",
+    place:"COVID",
+    title:"MAKE THE<br>MACHINE WORK.",
+    body:"A contractual problem was stuck. The answer was not another argument — it was a mechanism that could move.",
+    vector:"CAPABILITY · <strong>MECHANISM</strong>"
+  },
+
+  {
+    section:"MAN",
+    year:"2023",
+    place:"MINISTRY OF CULTURE",
+    title:"WHEN THE<br>INSTITUTION STOPS LISTENING.",
+    body:"Worked inside public administration while learning what happens when formal structures stop responding to the people they serve.",
+    vector:"CAPABILITY · <strong>SYSTEM READING</strong>"
+  },
+
+  {
+    section:"MAN",
+    year:"2024",
+    place:"OTVORENÁ KULTÚRA!",
+    title:"BUILD THE<br>OTHER CHANNEL.",
+    body:"Civic pressure, stakeholder coordination and an alternative route when the institutional channel stopped being sufficient.",
+    vector:"CAPABILITY · <strong>COORDINATION</strong>"
+  },
+
+  {
+    section:"MAN",
+    year:"2025",
+    place:"GAME STUDIOS",
+    title:"THE SAME<br>OPERATING SYSTEM.",
+    body:"Law, structure, narrative and execution brought together for creative teams — where the bottleneck mattered more than the job title.",
+    vector:"CAPABILITY · <strong>INTERVENTION</strong>"
+  },
+
+  {
+    section:"MYTH",
+    year:"THE TURN",
+    place:"PATTERN",
+    title:"THE FIELDS<br>CHANGED.",
+    body:"The more systems I entered, the more obvious the pattern became.",
+    vector:"PATTERN · <strong>THE BOTTLENECK</strong>"
+  },
+
+  {
+    section:"MYTH",
+    year:"2026",
+    place:"OPERATING SYSTEM",
+    title:"FIND THE<br>FRICTION.",
+    body:"Before solving a problem, identify the assumption, dependency or bottleneck that is actually stopping the system.",
+    vector:"METHOD · <strong>DIAGNOSE</strong>"
+  },
+
+  {
+    section:"MYTH",
+    year:"2026",
+    place:"SYSTEM",
+    title:"MAP THE<br>SYSTEM.",
+    body:"See the people, incentives, constraints and information flows that determine what can actually happen.",
+    vector:"METHOD · <strong>MAP</strong>"
+  },
+
+  {
+    section:"MYTH",
+    year:"2026",
+    place:"PEOPLE",
+    title:"MOVE THE<br>PEOPLE.",
+    body:"Strategy becomes real only when the right people understand the move and can act on it.",
+    vector:"METHOD · <strong>ALIGN</strong>"
+  },
+
+  {
+    section:"MYTH",
+    year:"2026",
+    place:"MECHANISM",
+    title:"BUILD WHAT<br>MAKES IT MOVE.",
+    body:"The intervention is the mechanism: a structure, decision, tool, narrative or process that converts intention into movement.",
+    vector:"METHOD · <strong>BUILD</strong>"
+  },
+
+  {
+    section:"LEGEND",
+    year:"2026",
+    place:"CONE OF AGENCY",
+    title:"LOW VELOCITY.<br>HIGH LEVERAGE.",
+    body:"Different fields. Different problems. One convergent capability: entering ambiguity, finding the bottleneck and creating movement.",
+    vector:"LEVERAGE · <strong>AGENCY</strong>"
+  }
+
+];
+
+let index = 0;
+let turned = false;
+
+const intro = document.getElementById("intro");
+const turnLayer = document.getElementById("turnLayer");
+const uno = document.getElementById("uno");
+const finalLayer = document.getElementById("finalLayer");
+
+const sectionLabel = document.getElementById("sectionLabel");
+const counter = document.getElementById("counter");
+const position = document.getElementById("position");
+
+const kicker = document.getElementById("kicker");
+const year = document.getElementById("year");
+const title = document.getElementById("title");
+const body = document.getElementById("body");
+const vector = document.getElementById("vector");
+
+const timeline = document.getElementById("timeline");
+const timelineProgress = document.getElementById("timelineProgress");
+const convergence = document.getElementById("convergence");
+
+function buildTimeline(){
+
+  cards.forEach((item,i)=>{
+
+    const point = document.createElement("div");
+    point.className = "timeline-point";
+
+    point.style.left =
+      ((i/(cards.length-1))*100) + "%";
+
+    point.innerHTML = `
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">
+        <div class="timeline-year">${item.year}</div>
+        <div class="timeline-place">${item.place}</div>
+      </div>
+    `;
+
+    point.addEventListener("click",()=>go(i));
+
+    timeline.appendChild(point);
+  });
+
+}
+
+function render(){
+
+  const item = cards[index];
+
+  sectionLabel.textContent = item.section;
+
+  counter.textContent =
+    String(index+1).padStart(2,"0") +
+    " / " +
+    String(cards.length).padStart(2,"0");
+
+  position.textContent =
+    String(index+1).padStart(2,"0") +
+    " / " +
+    String(cards.length).padStart(2,"0");
+
+  kicker.textContent = item.place;
+  year.textContent = item.year;
+  title.innerHTML = item.title;
+  body.textContent = item.body;
+  vector.innerHTML = item.vector;
+
+  timelineProgress.style.width =
+    ((index/(cards.length-1))*100) + "%";
+
+  document
+    .querySelectorAll(".timeline-point")
+    .forEach((p,i)=>{
+      p.classList.toggle("active",i===index);
+      p.classList.toggle("past",i<index);
+    });
+
+  if(index >= 7){
+    convergence.classList.add("show");
+  }else{
+    convergence.classList.remove("show");
+  }
+
+  if(index === cards.length-1){
+    setTimeout(()=>{
+      finalLayer.classList.add("show");
+    },650);
+  }
+
+}
+
+function showTurn(){
+
+  turnLayer.classList.add("show");
+  uno.classList.remove("flipped");
+
+  setTimeout(()=>{
+    uno.classList.add("flipped");
+  },500);
+
+}
+
+function enterMyth(){
+
+  turnLayer.classList.remove("show");
+
+  index = 6;
+  render();
+
+}
+
+function next(){
+
+  if(intro.classList.contains("hide")===false){
+    intro.classList.add("hide");
+    return;
+  }
+
+  if(finalLayer.classList.contains("show")) return;
+
+  if(index === 5){
+    showTurn();
+    return;
+  }
+
+  if(index < cards.length-1){
+    index++;
+    render();
+  }
+
+}
+
+function prev(){
+
+  if(finalLayer.classList.contains("show")){
+    finalLayer.classList.remove("show");
+    return;
+  }
+
+  if(index > 0){
+    index--;
+    render();
+  }
+
+}
+
+function go(i){
+
+  if(i === 6 && index < 6){
+    showTurn();
+    return;
+  }
+
+  if(i === cards.length-1){
+    index = i;
+    render();
+    return;
+  }
+
+  index = i;
+  render();
+
+}
+
+function reset(){
+
+  finalLayer.classList.remove("show");
+  turnLayer.classList.remove("show");
+  uno.classList.remove("flipped");
+
+  index = 0;
+  render();
+
+}
+
+document.getElementById("next").addEventListener("click",next);
+document.getElementById("prev").addEventListener("click",prev);
+
+document.getElementById("return").addEventListener("click",()=>{
+  reset();
+});
+
+uno.addEventListener("click",()=>{
+
+  if(!uno.classList.contains("flipped")){
+    uno.classList.add("flipped");
+  }else{
+    enterMyth();
+  }
+
+});
+
+intro.addEventListener("click",()=>{
+  intro.classList.add("hide");
+});
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key==="ArrowRight" || e.key===" "){
+    e.preventDefault();
+    next();
+  }
+
+  if(e.key==="ArrowLeft"){
+    e.preventDefault();
+    prev();
+  }
+
+  if(e.key==="Escape"){
+    reset();
+    intro.classList.remove("hide");
+  }
+
+});
+
+let startX = null;
+let startY = null;
+
+document.addEventListener("pointerdown",e=>{
+  startX = e.clientX;
+  startY = e.clientY;
+});
+
+document.addEventListener("pointerup",e=>{
+
+  if(startX===null) return;
+
+  const dx = e.clientX-startX;
+  const dy = e.clientY-startY;
+
+  startX = null;
+  startY = null;
+
+  if(Math.abs(dx)<45) return;
+  if(Math.abs(dx)<Math.abs(dy)) return;
+
+  if(dx<0){
+    next();
+  }else{
+    prev();
+  }
+
+});
+
+buildTimeline();
+render();
+
+setTimeout(()=>{
+  intro.classList.add("hide");
+},1800);
+
+</script>
+
+</body>
 </html>
