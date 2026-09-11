@@ -1,12 +1,855 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>index1.html</title>
-  </head>
-  <body>
-    <h1>Welcome to index1.html</h1>
-    <p>Created by GitHub Copilot Chat Assistant.</p>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MAN / MYTH / LEGEND — Interaction Test</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background:#111;
+  color:#eee;
+  font-family:Arial,sans-serif;
+  touch-action:pan-y;
+}
+
+button{
+  font:inherit;
+  color:inherit;
+  background:none;
+  border:0;
+  cursor:pointer;
+}
+
+#app{
+  position:relative;
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 50% 45%,#202020,#090909 70%);
+}
+
+.story{
+  position:relative;
+  width:min(900px,92vw);
+  height:min(760px,88vh);
+  overflow:hidden;
+  border:1px solid #444;
+  background:#151515;
+  box-shadow:0 20px 80px #000;
+}
+
+/* HEADER */
+
+header{
+  position:absolute;
+  z-index:20;
+  left:5%;
+  right:5%;
+  top:4%;
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  opacity:.8;
+}
+
+/* TIMELINE */
+
+.timeline{
+  position:absolute;
+  z-index:20;
+  left:5%;
+  right:5%;
+  top:11%;
+  height:24px;
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+
+.timeline:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  height:1px;
+  background:#555;
+}
+
+.tnode{
+  position:relative;
+  z-index:2;
+  width:14px;
+  height:14px;
+  border:1px solid #777;
+  border-radius:50%;
+  padding:0;
+  background:#151515;
+  flex:1;
+  max-width:42px;
+  transition:.25s;
+}
+
+.tnode.active{
+  background:#eee;
+  border-color:#eee;
+  transform:scale(1.18);
+}
+
+.tnode.past{
+  background:#777;
+}
+
+/* CARD */
+
+#card{
+  position:absolute;
+  inset:18% 8% 18%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  transition:opacity .18s,transform .25s;
+}
+
+.chapter{
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:#aaa;
+  margin-bottom:18px;
+}
+
+h1{
+  font-size:clamp(34px,6vw,72px);
+  line-height:.92;
+  margin:0;
+  max-width:760px;
+  letter-spacing:-.045em;
+  text-transform:uppercase;
+}
+
+.meta{
+  margin-top:26px;
+  font-size:13px;
+  line-height:1.6;
+  color:#aaa;
+  max-width:600px;
+}
+
+/* CONTROLS */
+
+.controls{
+  position:absolute;
+  z-index:30;
+  left:5%;
+  right:5%;
+  bottom:5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.nav{
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  padding:12px 8px;
+  opacity:.8;
+}
+
+.nav:hover,
+.nav:focus-visible{
+  opacity:1;
+  text-decoration:underline;
+}
+
+/* INTRO / TURN / FINAL */
+
+#intro,
+#final,
+#uno{
+  position:absolute;
+  z-index:100;
+  inset:0;
+  background:#111;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:10%;
+  transition:opacity .3s;
+}
+
+#intro{
+  cursor:pointer;
+}
+
+.hidden{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+
+.intro-main{
+  font-size:clamp(34px,7vw,76px);
+  font-weight:700;
+  line-height:.9;
+  letter-spacing:-.05em;
+}
+
+.intro-sub{
+  margin-top:24px;
+  font-size:11px;
+  letter-spacing:.25em;
+}
+
+#uno{
+  z-index:90;
+  background:#111;
+  font-size:clamp(36px,8vw,100px);
+  font-weight:700;
+  letter-spacing:-.06em;
+}
+
+#final{
+  z-index:110;
+  align-content:center;
+}
+
+.final-kicker{
+  font-size:12px;
+  letter-spacing:.25em;
+  margin-bottom:24px;
+}
+
+.final-copy{
+  font-size:clamp(22px,4vw,44px);
+  line-height:1.02;
+  font-weight:700;
+  max-width:760px;
+}
+
+.return{
+  margin-top:36px;
+  border:1px solid #777;
+  padding:13px 20px;
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+
+.return:hover,
+.return:focus-visible{
+  border-color:#fff;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+  .story{
+    width:100vw;
+    height:100dvh;
+    border:0;
+  }
+
+  .timeline{
+    top:12%;
+  }
+
+  .tnode{
+    max-width:none;
+  }
+
+  .controls{
+    bottom:max(4%,env(safe-area-inset-bottom));
+  }
+
+  #card{
+    inset:20% 8% 18%;
+  }
+
+  h1{
+    font-size:clamp(36px,11vw,60px);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main id="app">
+
+<section class="story" aria-label="Career story interaction test">
+
+<header>
+  <span id="chapter">MAN</span>
+  <span id="count">01 / 11</span>
+</header>
+
+<nav
+  class="timeline"
+  id="timeline"
+  aria-label="Story progress">
+</nav>
+
+<article
+  id="card"
+  aria-live="polite">
+</article>
+
+<div class="controls">
+
+  <button
+    class="nav"
+    id="prev"
+    type="button">
+    ← Previous
+  </button>
+
+  <button
+    class="nav"
+    id="next"
+    type="button">
+    Next →
+  </button>
+
+</div>
+
+<div
+  id="uno"
+  class="hidden"
+  aria-hidden="true">
+  THE TURN
+</div>
+
+<div id="intro">
+
+  <div>
+
+    <div class="intro-main">
+      MY CV<br>
+      WASN'T READY.<br>
+      I AM.
+    </div>
+
+    <div class="intro-sub">
+      PROOF OF WORK · TAP / CLICK / SWIPE
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  id="final"
+  class="hidden"
+  aria-hidden="true">
+
+  <div>
+
+    <div class="final-kicker">
+      LEGEND · 2026
+    </div>
+
+    <div class="final-copy">
+
+      SPEAKS LEGAL.<br>
+      SPEAKS MARKETING.<br>
+      SPEAKS CREATIVE.<br>
+      SPEAKS NARRATIVE.<br><br>
+
+      BUILDS SYSTEMS.<br>
+      CONNECTS PEOPLE.<br>
+      GETS THINGS MOVING.
+
+    </div>
+
+    <button
+      class="return"
+      id="return"
+      type="button">
+      Return to story
+    </button>
+
+  </div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+'use strict';
+
+
+/* =====================================================
+   STORY DATA
+===================================================== */
+
+const cards = [
+
+  {
+    chapter:'MAN',
+    year:'2010 · GOVERNMENT',
+    title:'LOW VELOCITY. HIGH LEVERAGE.',
+    body:'Legal precision inside public systems.'
+  },
+
+  {
+    chapter:'MAN',
+    year:'2021 · COVID',
+    title:'MAKE THE MACHINE WORK.',
+    body:'Turned a stuck contractual problem into a mechanism that could move.'
+  },
+
+  {
+    chapter:'MAN',
+    year:'2019 · THE HAGUE',
+    title:'FORMAL NEGOTIATION.',
+    body:'Negotiated for Slovakia and EU Member States at the HCCH Judgments Convention.'
+  },
+
+  {
+    chapter:'MAN',
+    year:'2024 · OTVORENÁ KULTÚRA!',
+    title:'WHEN THE INSTITUTION STOPS LISTENING.',
+    body:'Built civic pressure, coordination and an alternative channel.'
+  },
+
+  {
+    chapter:'MAN',
+    year:'2022 · STARTUPS',
+    title:'HELP THEM MOVE.',
+    body:'Strategy, structure and execution where the bottleneck mattered most.'
+  },
+
+  {
+    chapter:'MAN',
+    year:'2025 · GAME STUDIOS',
+    title:'PRO BONO.',
+    body:'Use the same operating system for creative teams.'
+  },
+
+  {
+    chapter:'MYTH',
+    year:'THE TURN',
+    title:'THE MORE I HELPED BUILD...',
+    body:'...the more obvious the pattern became.'
+  },
+
+  {
+    chapter:'MYTH',
+    year:'2020 · ART',
+    title:'KNOW WHAT YOU HATE.',
+    body:'Name the broken assumption before designing the solution.'
+  },
+
+  {
+    chapter:'MYTH',
+    year:'OPERATING SYSTEM',
+    title:'GO WIDE.',
+    body:'Move across law, policy, technology, narrative and people.'
+  },
+
+  {
+    chapter:'MYTH',
+    year:'CONNECTION',
+    title:'THE MOAT IS THE CONNECTION.',
+    body:'The durable advantage is knowing how systems and people actually connect.'
+  },
+
+  {
+    chapter:'LEGEND',
+    year:'2026 · UMIVERSE',
+    title:'BUILD WHAT’S NEXT.',
+    body:'Applied metacognition, game design and strategic systems thinking.'
+  }
+
+];
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let index = 0;
+let unoTimer = null;
+let touchX = 0;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const card = document.getElementById('card');
+const chapter = document.getElementById('chapter');
+const count = document.getElementById('count');
+const timeline = document.getElementById('timeline');
+const intro = document.getElementById('intro');
+const uno = document.getElementById('uno');
+const final = document.getElementById('final');
+
+
+/* =====================================================
+   TIMELINE
+===================================================== */
+
+function buildTimeline(){
+
+  timeline.innerHTML = '';
+
+  cards.forEach((cardData,i)=>{
+
+    const button = document.createElement('button');
+
+    button.type = 'button';
+
+    button.className = 'tnode';
+
+    button.setAttribute(
+      'aria-label',
+      'Go to card ' + (i + 1)
+    );
+
+    button.addEventListener(
+      'click',
+      () => go(i)
+    );
+
+    timeline.appendChild(button);
+
+  });
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function render(){
+
+  const current = cards[index];
+
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(14px)';
+
+  requestAnimationFrame(()=>{
+
+    chapter.textContent =
+      current.chapter;
+
+    count.textContent =
+      String(index + 1).padStart(2,'0')
+      + ' / '
+      + cards.length;
+
+    card.innerHTML = `
+
+      <div class="chapter">
+        ${current.year}
+      </div>
+
+      <h1>
+        ${current.title}
+      </h1>
+
+      <div class="meta">
+        ${current.body}
+      </div>
+
+    `;
+
+    card.style.opacity = '1';
+    card.style.transform = 'translateX(0)';
+
+  });
+
+
+  /* timeline */
+
+  [...timeline.children].forEach((node,i)=>{
+
+    node.classList.toggle(
+      'active',
+      i === index
+    );
+
+    node.classList.toggle(
+      'past',
+      i < index
+    );
+
+  });
+
+
+  /* final screen */
+
+  const isFinal =
+    index === cards.length - 1;
+
+  final.classList.toggle(
+    'hidden',
+    !isFinal
+  );
+
+  final.setAttribute(
+    'aria-hidden',
+    isFinal ? 'false' : 'true'
+  );
+
+}
+
+
+/* =====================================================
+   THE TURN
+===================================================== */
+
+function showTurn(){
+
+  clearTimeout(unoTimer);
+
+  uno.classList.remove('hidden');
+
+  unoTimer = setTimeout(()=>{
+
+    uno.classList.add('hidden');
+
+  },650);
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function go(newIndex){
+
+  if(newIndex < 0){
+    newIndex = 0;
+  }
+
+  if(newIndex >= cards.length){
+    newIndex = cards.length - 1;
+  }
+
+  const oldIndex = index;
+
+  index = newIndex;
+
+
+  if(
+    cards[oldIndex] &&
+    cards[index] &&
+    cards[oldIndex].chapter !== cards[index].chapter &&
+    cards[index].chapter === 'MYTH'
+  ){
+
+    showTurn();
+
+  }
+
+  render();
+
+}
+
+
+function next(){
+
+  if(index < cards.length - 1){
+
+    go(index + 1);
+
+  }
+
+}
+
+
+function prev(){
+
+  if(index > 0){
+
+    go(index - 1);
+
+  }
+
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+document
+  .getElementById('next')
+  .addEventListener('click',next);
+
+document
+  .getElementById('prev')
+  .addEventListener('click',prev);
+
+
+/* =====================================================
+   RETURN
+===================================================== */
+
+document
+  .getElementById('return')
+  .addEventListener('click',()=>{
+
+    index = 0;
+
+    render();
+
+  });
+
+
+/* =====================================================
+   INTRO
+===================================================== */
+
+intro.addEventListener(
+  'click',
+  ()=>{
+    intro.classList.add('hidden');
+  }
+);
+
+setTimeout(()=>{
+
+  intro.classList.add('hidden');
+
+},1400);
+
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+window.addEventListener(
+  'keydown',
+  event => {
+
+    if(
+      event.key === 'ArrowRight' ||
+      event.key === 'ArrowDown'
+    ){
+
+      event.preventDefault();
+
+      intro.classList.add('hidden');
+
+      next();
+
+    }
+
+
+    if(
+      event.key === 'ArrowLeft' ||
+      event.key === 'ArrowUp'
+    ){
+
+      event.preventDefault();
+
+      intro.classList.add('hidden');
+
+      prev();
+
+    }
+
+
+    if(event.key === ' '){
+
+      event.preventDefault();
+
+      intro.classList.add('hidden');
+
+      next();
+
+    }
+
+
+    if(event.key === 'Escape'){
+
+      index = 0;
+
+      render();
+
+      final.classList.add('hidden');
+
+      intro.classList.remove('hidden');
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   SWIPE
+===================================================== */
+
+card.addEventListener(
+  'pointerdown',
+  event => {
+
+    touchX = event.clientX;
+
+  }
+);
+
+
+card.addEventListener(
+  'pointerup',
+  event => {
+
+    const distance =
+      event.clientX - touchX;
+
+    if(Math.abs(distance) > 45){
+
+      if(distance < 0){
+
+        next();
+
+      }else{
+
+        prev();
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+buildTimeline();
+
+render();
+
+</script>
+
+</body>
 </html>
