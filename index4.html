@@ -1,12 +1,1396 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>index4.html</title>
-  </head>
-  <body>
-    <h1>Welcome to index4.html</h1>
-    <p>Created by GitHub Copilot Chat Assistant.</p>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MAN / MYTH / LEGEND</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#101010;
+  color:#eee;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  touch-action:none;
+  user-select:none;
+}
+
+button{
+  font:inherit;
+  color:inherit;
+}
+
+#app{
+  width:100%;
+  height:100%;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 45%,#202020 0%,#111 58%,#090909 100%);
+}
+
+.stage{
+  width:min(1180px,100%);
+  height:100%;
+  margin:auto;
+  position:relative;
+  padding:24px 34px;
+}
+
+/* HEADER */
+
+.header{
+  position:absolute;
+  top:24px;
+  left:34px;
+  right:34px;
+  height:40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  z-index:10;
+}
+
+.logo{
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:.25em;
+}
+
+.chapter{
+  font-size:9px;
+  letter-spacing:.2em;
+  opacity:.4;
+}
+
+/* TIMELINE */
+
+.timeline-wrap{
+  position:absolute;
+  left:34px;
+  right:34px;
+  top:88px;
+  height:92px;
+  z-index:10;
+}
+
+.timeline{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+
+.timeline-line{
+  position:absolute;
+  left:0;
+  right:0;
+  top:25px;
+  height:1px;
+  background:#414141;
+}
+
+.timeline-progress{
+  position:absolute;
+  left:0;
+  top:24px;
+  height:3px;
+  width:0;
+  background:#eee;
+  transition:width .6s cubic-bezier(.2,.8,.2,1);
+}
+
+.timeline-point{
+  position:absolute;
+  top:17px;
+  width:20px;
+  height:20px;
+  transform:translateX(-50%);
+  cursor:pointer;
+  z-index:3;
+}
+
+.timeline-dot{
+  width:9px;
+  height:9px;
+  margin:5px;
+  border:1px solid #666;
+  border-radius:50%;
+  background:#111;
+  transition:.3s ease;
+}
+
+.timeline-point:hover .timeline-dot{
+  transform:scale(1.45);
+  border-color:#fff;
+}
+
+.timeline-point.active .timeline-dot{
+  background:#fff;
+  border-color:#fff;
+  transform:scale(1.55);
+}
+
+.timeline-point.past .timeline-dot{
+  background:#666;
+  border-color:#888;
+}
+
+.timeline-label{
+  position:absolute;
+  top:40px;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  text-align:center;
+  opacity:.27;
+  transition:.35s ease;
+}
+
+.timeline-year{
+  font-size:9px;
+  font-weight:bold;
+  letter-spacing:.14em;
+}
+
+.timeline-place{
+  margin-top:4px;
+  font-size:8px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.timeline-point.active .timeline-label{
+  opacity:1;
+}
+
+.timeline-point.active .timeline-year{
+  font-size:10px;
+}
+
+/* STORY CARD */
+
+.story{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(760px,calc(100% - 48px));
+  transform:translate(-50%,-42%);
+  z-index:2;
+}
+
+.card{
+  min-height:430px;
+  border:1px solid #3b3b3b;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  position:relative;
+  padding:46px 50px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  box-shadow:0 30px 90px rgba(0,0,0,.38);
+  transition:opacity .2s ease,transform .2s ease;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(255,255,255,.035);
+  pointer-events:none;
+}
+
+.card-kicker{
+  font-size:9px;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  opacity:.38;
+}
+
+.card-year{
+  position:absolute;
+  right:48px;
+  top:43px;
+  font-size:9px;
+  letter-spacing:.17em;
+  opacity:.35;
+}
+
+.card-title{
+  margin-top:82px;
+  max-width:670px;
+  font-size:clamp(36px,6vw,66px);
+  line-height:.91;
+  letter-spacing:-.055em;
+  text-transform:uppercase;
+}
+
+.card-body{
+  max-width:570px;
+  margin-top:32px;
+  font-size:15px;
+  line-height:1.5;
+  color:#aaa;
+}
+
+.card-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-top:38px;
+}
+
+.card-index{
+  font-size:9px;
+  letter-spacing:.18em;
+  opacity:.28;
+}
+
+.card-hint{
+  font-size:8px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  opacity:.3;
+}
+
+/* EVIDENCE DRAWER */
+
+.evidence-layer{
+  position:absolute;
+  inset:0;
+  z-index:30;
+  background:rgba(5,5,5,.72);
+  backdrop-filter:blur(8px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease;
+}
+
+.evidence-layer.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.evidence{
+  width:min(650px,88vw);
+  max-height:82vh;
+  overflow:auto;
+  border:1px solid #555;
+  background:#151515;
+  padding:40px;
+  box-shadow:0 35px 100px rgba(0,0,0,.65);
+  transform:translateY(18px);
+  transition:transform .4s ease;
+}
+
+.evidence-layer.show .evidence{
+  transform:translateY(0);
+}
+
+.evidence-top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  padding-bottom:20px;
+  border-bottom:1px solid #333;
+}
+
+.evidence-label{
+  font-size:9px;
+  letter-spacing:.24em;
+  color:#999;
+}
+
+.evidence-year{
+  font-size:9px;
+  letter-spacing:.18em;
+  color:#777;
+}
+
+.evidence h2{
+  margin:30px 0 16px;
+  font-size:clamp(25px,5vw,42px);
+  line-height:.95;
+  letter-spacing:-.045em;
+  text-transform:uppercase;
+}
+
+.evidence-role{
+  font-size:12px;
+  line-height:1.55;
+  color:#bbb;
+  max-width:530px;
+}
+
+.evidence-meta{
+  margin-top:28px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.meta{
+  border-top:1px solid #333;
+  padding-top:9px;
+}
+
+.meta-label{
+  font-size:7px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#666;
+}
+
+.meta-value{
+  margin-top:5px;
+  font-size:10px;
+  line-height:1.4;
+  color:#aaa;
+}
+
+.close{
+  margin-top:34px;
+  border:1px solid #444;
+  background:#111;
+  padding:10px 15px;
+  font-size:8px;
+  letter-spacing:.18em;
+  cursor:pointer;
+}
+
+.close:hover{
+  border-color:#888;
+}
+
+/* CONTROLS */
+
+.controls{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-55px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.nav{
+  border:1px solid #383838;
+  background:#151515;
+  padding:9px 15px;
+  font-size:8px;
+  letter-spacing:.16em;
+  cursor:pointer;
+}
+
+.nav:hover{
+  border-color:#777;
+  background:#202020;
+}
+
+/* TURN */
+
+.turn-layer{
+  position:absolute;
+  inset:0;
+  z-index:40;
+  background:#090909;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s;
+}
+
+.turn-layer.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.turn-card{
+  width:min(420px,82vw);
+  aspect-ratio:1.55/1;
+  border:1px solid #555;
+  background:#151515;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:40px;
+  cursor:pointer;
+}
+
+.turn-front,
+.turn-back{
+  transition:opacity .25s;
+}
+
+.turn-back{
+  display:none;
+}
+
+.turn-card.flipped .turn-front{
+  display:none;
+}
+
+.turn-card.flipped .turn-back{
+  display:block;
+}
+
+.turn-label{
+  font-size:9px;
+  letter-spacing:.28em;
+  color:#888;
+}
+
+.turn-title{
+  margin-top:25px;
+  font-size:clamp(28px,6vw,48px);
+  line-height:.92;
+  letter-spacing:-.05em;
+  text-transform:uppercase;
+}
+
+.turn-sub{
+  margin-top:20px;
+  color:#999;
+  font-size:12px;
+  line-height:1.5;
+}
+
+/* CONVERGENCE */
+
+.convergence{
+  position:absolute;
+  left:50%;
+  bottom:11%;
+  width:min(520px,75vw);
+  height:150px;
+  transform:translateX(-50%);
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .7s;
+}
+
+.convergence.show{
+  opacity:.55;
+}
+
+.cone-line{
+  position:absolute;
+  left:0;
+  width:100%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#777,#fff);
+  transform-origin:left center;
+}
+
+.cone-line:nth-child(1){
+  top:12px;
+  transform:rotate(8deg);
+}
+
+.cone-line:nth-child(2){
+  top:47px;
+  transform:rotate(4deg);
+}
+
+.cone-line:nth-child(3){
+  top:75px;
+}
+
+.cone-line:nth-child(4){
+  top:103px;
+  transform:rotate(-4deg);
+}
+
+.cone-line:nth-child(5){
+  top:138px;
+  transform:rotate(-8deg);
+}
+
+.cone-target{
+  position:absolute;
+  right:0;
+  top:50%;
+  width:12px;
+  height:12px;
+  border:1px solid #fff;
+  border-radius:50%;
+  transform:translateY(-50%);
+}
+
+/* FINAL */
+
+.final-layer{
+  position:absolute;
+  inset:0;
+  z-index:45;
+  background:#0b0b0b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .6s;
+}
+
+.final-layer.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.final{
+  width:min(650px,88vw);
+  padding:45px;
+  border:1px solid #3d3d3d;
+}
+
+.final-kicker{
+  font-size:9px;
+  letter-spacing:.25em;
+  color:#777;
+}
+
+.final h1{
+  margin:28px 0 20px;
+  font-size:clamp(38px,7vw,70px);
+  line-height:.88;
+  letter-spacing:-.055em;
+  text-transform:uppercase;
+}
+
+.final p{
+  max-width:520px;
+  color:#999;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.final-return{
+  margin-top:38px;
+  border:1px solid #444;
+  background:#111;
+  padding:11px 16px;
+  font-size:8px;
+  letter-spacing:.2em;
+  cursor:pointer;
+}
+
+/* INTRO */
+
+.intro{
+  position:absolute;
+  inset:0;
+  z-index:60;
+  background:#0b0b0b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  cursor:pointer;
+  transition:opacity .65s;
+}
+
+.intro.hide{
+  opacity:0;
+  pointer-events:none;
+}
+
+.intro-main{
+  font-size:clamp(40px,8vw,90px);
+  line-height:.86;
+  letter-spacing:-.06em;
+  text-transform:uppercase;
+}
+
+.intro-sub{
+  margin-top:30px;
+  font-size:8px;
+  letter-spacing:.3em;
+  opacity:.35;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+  .stage{
+    padding:18px;
+  }
+
+  .header{
+    top:18px;
+    left:18px;
+    right:18px;
+  }
+
+  .timeline-wrap{
+    left:18px;
+    right:18px;
+    top:76px;
+    height:70px;
+    overflow:hidden;
+  }
+
+  .timeline{
+    min-width:760px;
+  }
+
+  .timeline-label{
+    top:36px;
+  }
+
+  .timeline-place{
+    display:none;
+  }
+
+  .timeline-point:not(.active) .timeline-label{
+    opacity:0;
+  }
+
+  .story{
+    width:calc(100% - 36px);
+    top:50%;
+    transform:translate(-50%,-39%);
+  }
+
+  .card{
+    min-height:400px;
+    padding:32px 27px;
+  }
+
+  .card-year{
+    right:27px;
+    top:30px;
+  }
+
+  .card-title{
+    margin-top:62px;
+    font-size:clamp(34px,10vw,50px);
+  }
+
+  .card-body{
+    font-size:14px;
+    margin-top:25px;
+  }
+
+  .card-footer{
+    margin-top:28px;
+  }
+
+  .controls{
+    bottom:-52px;
+  }
+
+  .evidence{
+    padding:28px;
+    max-height:78vh;
+  }
+
+  .evidence-meta{
+    grid-template-columns:1fr;
+  }
+
+  .convergence{
+    bottom:9%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<div class="stage">
+
+  <header class="header">
+    <div class="logo">MAN / MYTH / LEGEND</div>
+    <div class="chapter" id="chapter">01 / 12</div>
+  </header>
+
+  <div class="timeline-wrap">
+    <div class="timeline" id="timeline">
+      <div class="timeline-line"></div>
+      <div class="timeline-progress" id="progress"></div>
+    </div>
+  </div>
+
+  <main class="story">
+
+    <section class="card" id="card">
+
+      <div>
+        <div class="card-kicker" id="kicker">THE RECORD</div>
+        <div class="card-year" id="year">2010</div>
+
+        <div class="card-title" id="title">
+          LOW VELOCITY.<br>
+          HIGH LEVERAGE.
+        </div>
+
+        <div class="card-body" id="body">
+          Legal precision inside systems that move slowly.
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="card-index" id="index">01 / 12</div>
+        <div class="card-hint">TAP THE TIMELINE FOR PROOF</div>
+      </div>
+
+    </section>
+
+    <div class="controls">
+      <button class="nav" id="prev">← PREVIOUS</button>
+      <button class="nav" id="next">NEXT →</button>
+    </div>
+
+  </main>
+
+  <div class="convergence" id="convergence">
+    <div class="cone-line"></div>
+    <div class="cone-line"></div>
+    <div class="cone-line"></div>
+    <div class="cone-line"></div>
+    <div class="cone-line"></div>
+    <div class="cone-target"></div>
+  </div>
+
+</div>
+
+
+<!-- EVIDENCE -->
+
+<div class="evidence-layer" id="evidenceLayer">
+
+  <div class="evidence">
+
+    <div class="evidence-top">
+      <div class="evidence-label">PROOF OF WORK</div>
+      <div class="evidence-year" id="eYear">2010</div>
+    </div>
+
+    <h2 id="eTitle">MINISTRY OF JUSTICE</h2>
+
+    <div class="evidence-role" id="eRole">
+      Legal precision inside public systems. International and domestic legal work where wording, procedure and institutional constraints determined what could actually move.
+    </div>
+
+    <div class="evidence-meta">
+
+      <div class="meta">
+        <div class="meta-label">PLACE</div>
+        <div class="meta-value" id="ePlace">SLOVAKIA</div>
+      </div>
+
+      <div class="meta">
+        <div class="meta-label">ROLE</div>
+        <div class="meta-value" id="eMetaRole">LEGAL PRECISION</div>
+      </div>
+
+      <div class="meta">
+        <div class="meta-label">PERIOD</div>
+        <div class="meta-value" id="ePeriod">2010–2015</div>
+      </div>
+
+      <div class="meta">
+        <div class="meta-label">SIGNAL</div>
+        <div class="meta-value" id="eSignal">PRECISION UNDER CONSTRAINT</div>
+      </div>
+
+    </div>
+
+    <button class="close" id="closeEvidence">
+      CLOSE / RETURN TO STORY
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- TURN -->
+
+<div class="turn-layer" id="turnLayer">
+
+  <div class="turn-card" id="turnCard">
+
+    <div class="turn-front">
+      <div class="turn-label">THE TURN</div>
+      <div class="turn-title">THE CV WAS<br>NEVER THE STORY.</div>
+      <div class="turn-sub">TAP TO TURN</div>
+    </div>
+
+    <div class="turn-back">
+      <div class="turn-label">THE PATTERN</div>
+      <div class="turn-title">THE PATTERN<br>WAS.</div>
+      <div class="turn-sub">
+        Different fields. Different problems.<br>
+        Increasingly the same operating system.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- FINAL -->
+
+<div class="final-layer" id="finalLayer">
+
+  <div class="final">
+
+    <div class="final-kicker">LEGEND / 2026</div>
+
+    <h1>GIVE ME THE<br>PROBLEM<br>WORTH SOLVING.</h1>
+
+    <p>
+      I work where the system is moving slowly, the path is unclear,
+      and someone needs to figure out what actually makes it move.
+    </p>
+
+    <button class="final-return" id="returnStory">
+      RETURN TO STORY
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- INTRO -->
+
+<div class="intro" id="intro">
+
+  <div>
+    <div class="intro-main">
+      MY CV<br>
+      WASN'T READY.<br>
+      I AM.
+    </div>
+
+    <div class="intro-sub">
+      PROOF OF WORK · TAP / CLICK / SWIPE
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const entries = [
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2010",
+    place:"JUSTICE",
+    title:"LOW VELOCITY. HIGH LEVERAGE.",
+    body:"Legal precision inside systems that move slowly.",
+    evidence:{
+      title:"MINISTRY OF JUSTICE",
+      role:"Legal precision inside public systems. International and domestic legal work where wording, procedure and institutional constraints determined what could actually move.",
+      place:"SLOVAKIA",
+      metaRole:"LEGAL PRECISION",
+      period:"2010–2015",
+      signal:"PRECISION UNDER CONSTRAINT"
+    }
+  },
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2015",
+    place:"GOVERNMENT",
+    title:"MAKE THE DECISION MOVE.",
+    body:"Advising institutions where the legal answer was only the beginning.",
+    evidence:{
+      title:"MINISTERIAL ADVISORY",
+      role:"Counselled ministers and worked across institutional, legal and political constraints to turn complex questions into actionable decisions.",
+      place:"SLOVAKIA",
+      metaRole:"MINISTERIAL ADVISOR",
+      period:"2015+",
+      signal:"DECISION UNDER CONSTRAINT"
+    }
+  },
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2019",
+    place:"THE HAGUE",
+    title:"FORMAL NEGOTIATION.",
+    body:"Representing Slovakia and EU Member States where every word had consequences.",
+    evidence:{
+      title:"HCCH JUDGMENTS CONVENTION",
+      role:"Negotiated on behalf of the Slovak Republic and EU Member States at the 22nd Diplomatic Session of the Hague Conference on Private International Law.",
+      place:"PEACE PALACE · THE HAGUE",
+      metaRole:"INTERNATIONAL ATTORNEY",
+      period:"18 JUN – 2 JUL 2019",
+      signal:"CONVENTION ADOPTED · 2 JUL 2019"
+    }
+  },
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2021",
+    place:"COVID",
+    title:"MAKE THE MACHINE WORK.",
+    body:"When the existing mechanism stopped moving, I built another one.",
+    evidence:{
+      title:"COVID CONTRACT MECHANISM",
+      role:"Developed a mass-contract adoption mechanism designed to help struggling creative professionals navigate an exceptional institutional and contractual situation.",
+      place:"SLOVAKIA",
+      metaRole:"MECHANISM DESIGN",
+      period:"2021",
+      signal:"TURNING DEADLOCK INTO MOTION"
+    }
+  },
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2022",
+    place:"ARTS",
+    title:"HELP THEM MOVE.",
+    body:"Strategy, structure and execution where the bottleneck mattered most.",
+    evidence:{
+      title:"ACADEMY OF FINE ARTS",
+      role:"Worked at the intersection of institutional strategy, culture, technology and execution.",
+      place:"BRATISLAVA",
+      metaRole:"STRATEGY / SYSTEMS",
+      period:"2022–2024",
+      signal:"STRUCTURE FOR CREATIVE WORK"
+    }
+  },
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2023",
+    place:"CULTURE",
+    title:"WHEN THE INSTITUTION STOPS LISTENING.",
+    body:"Build the pressure, find the people, create another channel.",
+    evidence:{
+      title:"OTVORENÁ KULTÚRA!",
+      role:"Culture policy, advocacy, stakeholder coordination and civic pressure around the future of Slovak culture.",
+      place:"SLOVAKIA",
+      metaRole:"CIVIC / STRATEGIC COORDINATION",
+      period:"2023–PRESENT",
+      signal:"BUILDING ANOTHER CHANNEL"
+    }
+  },
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2024",
+    place:"MINISTRY",
+    title:"BUILD THE OTHER CHANNEL.",
+    body:"When the formal system cannot carry the problem, change the mechanism.",
+    evidence:{
+      title:"MINISTRY OF CULTURE",
+      role:"Director-level institutional work across operations, quality projects, information access and organizational systems.",
+      place:"SLOVAKIA",
+      metaRole:"DIRECTOR",
+      period:"2023–2024",
+      signal:"INSTITUTIONAL LEVERAGE"
+    }
+  },
+
+  {
+    chapter:"THE RECORD",
+    section:"MAN",
+    year:"2025",
+    place:"GAMES",
+    title:"THE SAME OPERATING SYSTEM.",
+    body:"Different field. Same instinct for finding the bottleneck.",
+    evidence:{
+      title:"GAME STUDIOS / CULTURAL TECHNOLOGY",
+      role:"Applied strategic and systems thinking to creative technology, game development and emerging interactive work.",
+      place:"EUROPE",
+      metaRole:"STRATEGY / GAME DEVELOPMENT",
+      period:"2025+",
+      signal:"SYSTEMS → CREATIVE TECHNOLOGY"
+    }
+  },
+
+  {
+    chapter:"THE OPERATING SYSTEM",
+    section:"MYTH",
+    year:"01",
+    place:"PATTERN",
+    title:"FIND THE FRICTION.",
+    body:"The problem is rarely where the system says it is.",
+    evidence:{
+      title:"THE FIRST MOVE",
+      role:"Before solving a problem, locate the constraint that is actually preventing movement.",
+      place:"OPERATING SYSTEM",
+      metaRole:"DIAGNOSIS",
+      period:"REPEATED PATTERN",
+      signal:"FIND THE REAL BOTTLENECK"
+    }
+  },
+
+  {
+    chapter:"THE OPERATING SYSTEM",
+    section:"MYTH",
+    year:"02",
+    place:"SYSTEM",
+    title:"MAP THE SYSTEM.",
+    body:"Understand the people, incentives and constraints before moving anything.",
+    evidence:{
+      title:"SYSTEM MAPPING",
+      role:"Law, institutions, stakeholders, technology and narrative become useful only when their connections are understood.",
+      place:"OPERATING SYSTEM",
+      metaRole:"SYSTEMS THINKING",
+      period:"REPEATED PATTERN",
+      signal:"SEE THE WHOLE MACHINE"
+    }
+  },
+
+  {
+    chapter:"THE OPERATING SYSTEM",
+    section:"MYTH",
+    year:"03",
+    place:"AGENCY",
+    title:"MOVE WHAT MATTERS.",
+    body:"Turn ambiguity into a sequence of decisions.",
+    evidence:{
+      title:"LOW VELOCITY / HIGH LEVERAGE",
+      role:"The accumulated skill is not knowing every answer. It is knowing what needs to move first.",
+      place:"OPERATING SYSTEM",
+      metaRole:"STRATEGIC OPERATOR",
+      period:"2026",
+      signal:"LOW VELOCITY · HIGH LEVERAGE"
+    }
+  },
+
+  {
+    chapter:"THE MULTIPLIER",
+    section:"LEGEND",
+    year:"2026",
+    place:"UMIVERSE",
+    title:"GIVE ME THE PROBLEM WORTH SOLVING.",
+    body:"Years of different problems became one increasingly useful way of working.",
+    evidence:{
+      title:"CURRENT OPERATING RANGE",
+      role:"Law. Government. Culture. Technology. Games. Applied metacognition. Different domains; increasingly convergent strategic capability.",
+      place:"EUROPE / GLOBAL",
+      metaRole:"CHIEF OF STAFF / STRATEGIC OPERATOR",
+      period:"NOW",
+      signal:"CONE OF AGENCY"
+    }
+  }
+
+];
+
+let current = 0;
+let introDismissed = false;
+let touchStartX = 0;
+
+const timeline = document.getElementById("timeline");
+const progress = document.getElementById("progress");
+
+const kicker = document.getElementById("kicker");
+const year = document.getElementById("year");
+const title = document.getElementById("title");
+const body = document.getElementById("body");
+const index = document.getElementById("index");
+const chapter = document.getElementById("chapter");
+
+const evidenceLayer = document.getElementById("evidenceLayer");
+const eYear = document.getElementById("eYear");
+const eTitle = document.getElementById("eTitle");
+const eRole = document.getElementById("eRole");
+const ePlace = document.getElementById("ePlace");
+const eMetaRole = document.getElementById("eMetaRole");
+const ePeriod = document.getElementById("ePeriod");
+const eSignal = document.getElementById("eSignal");
+
+const turnLayer = document.getElementById("turnLayer");
+const turnCard = document.getElementById("turnCard");
+const finalLayer = document.getElementById("finalLayer");
+const convergence = document.getElementById("convergence");
+const intro = document.getElementById("intro");
+
+function buildTimeline(){
+
+  entries.forEach((item,i)=>{
+
+    const point = document.createElement("div");
+
+    point.className = "timeline-point";
+
+    const pct = entries.length === 1
+      ? 50
+      : (i/(entries.length-1))*100;
+
+    point.style.left = pct+"%";
+
+    point.innerHTML = `
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">
+        <div class="timeline-year">${item.year}</div>
+        <div class="timeline-place">${item.place}</div>
+      </div>
+    `;
+
+    point.addEventListener("click",e=>{
+      e.stopPropagation();
+      go(i);
+      openEvidence(i);
+    });
+
+    timeline.appendChild(point);
+  });
+}
+
+function render(){
+
+  const item = entries[current];
+
+  kicker.textContent = item.chapter;
+  year.textContent = item.year;
+  title.innerHTML = item.title.replace(/\./g,".<br>");
+  body.textContent = item.body;
+
+  index.textContent =
+    String(current+1).padStart(2,"0")+
+    " / "+
+    String(entries.length).padStart(2,"0");
+
+  chapter.textContent =
+    String(current+1).padStart(2,"0")+
+    " / "+
+    String(entries.length).padStart(2,"0");
+
+  document.querySelectorAll(".timeline-point")
+    .forEach((point,i)=>{
+
+      point.classList.toggle("active",i===current);
+      point.classList.toggle("past",i<current);
+
+    });
+
+  progress.style.width =
+    (current/(entries.length-1))*100+"%";
+
+  convergence.classList.toggle(
+    "show",
+    current >= 8
+  );
+
+  if(current === entries.length-1){
+    setTimeout(()=>{
+      finalLayer.classList.add("show");
+    },900);
+  }
+
+}
+
+function go(i){
+
+  if(i<0) i=0;
+  if(i>=entries.length) i=entries.length-1;
+
+  const old = current;
+  current = i;
+
+  if(old < 8 && current >= 8){
+    showTurn();
+    return;
+  }
+
+  render();
+}
+
+function next(){
+
+  if(current < entries.length-1){
+    go(current+1);
+  }else{
+    finalLayer.classList.add("show");
+  }
+
+}
+
+function prev(){
+
+  if(current>0){
+    go(current-1);
+  }
+
+}
+
+function openEvidence(i){
+
+  const item = entries[i];
+  const e = item.evidence;
+
+  eYear.textContent = item.year;
+  eTitle.textContent = e.title;
+  eRole.textContent = e.role;
+  ePlace.textContent = e.place;
+  eMetaRole.textContent = e.metaRole;
+  ePeriod.textContent = e.period;
+  eSignal.textContent = e.signal;
+
+  evidenceLayer.classList.add("show");
+
+}
+
+function closeEvidence(){
+
+  evidenceLayer.classList.remove("show");
+
+}
+
+function showTurn(){
+
+  turnLayer.classList.add("show");
+  turnCard.classList.remove("flipped");
+
+}
+
+turnCard.addEventListener("click",()=>{
+
+  if(!turnCard.classList.contains("flipped")){
+
+    turnCard.classList.add("flipped");
+
+    setTimeout(()=>{
+
+      turnLayer.classList.remove("show");
+      current = 8;
+      render();
+
+    },850);
+
+  }
+
+});
+
+document.getElementById("prev")
+  .addEventListener("click",prev);
+
+document.getElementById("next")
+  .addEventListener("click",next);
+
+document.getElementById("closeEvidence")
+  .addEventListener("click",closeEvidence);
+
+evidenceLayer.addEventListener("click",e=>{
+
+  if(e.target === evidenceLayer){
+    closeEvidence();
+  }
+
+});
+
+document.getElementById("returnStory")
+  .addEventListener("click",()=>{
+
+    finalLayer.classList.remove("show");
+    current = 0;
+    render();
+
+  });
+
+
+/* KEYBOARD */
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key==="ArrowRight"){
+    e.preventDefault();
+    next();
+  }
+
+  if(e.key==="ArrowLeft"){
+    e.preventDefault();
+    prev();
+  }
+
+  if(e.key==="Escape"){
+
+    closeEvidence();
+    finalLayer.classList.remove("show");
+    turnLayer.classList.remove("show");
+
+  }
+
+});
+
+
+/* SWIPE */
+
+document.addEventListener("pointerdown",e=>{
+
+  touchStartX = e.clientX;
+
+});
+
+document.addEventListener("pointerup",e=>{
+
+  const dx = e.clientX - touchStartX;
+
+  if(Math.abs(dx)<55) return;
+
+  if(evidenceLayer.classList.contains("show")) return;
+  if(turnLayer.classList.contains("show")) return;
+  if(finalLayer.classList.contains("show")) return;
+
+  if(dx<0){
+    next();
+  }else{
+    prev();
+  }
+
+});
+
+
+/* INTRO */
+
+function dismissIntro(){
+
+  if(introDismissed) return;
+
+  introDismissed = true;
+  intro.classList.add("hide");
+
+}
+
+intro.addEventListener("click",dismissIntro);
+
+setTimeout(dismissIntro,3500);
+
+
+/* INIT */
+
+buildTimeline();
+render();
+
+</script>
+
+</body>
 </html>
