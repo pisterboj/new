@@ -1,0 +1,1953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MAN / MYTH / LEGEND — Career Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#10100f;
+  --bg2:#151513;
+  --paper:#f4f0e8;
+  --body:#c8c2b8;
+  --muted:#89857d;
+  --dim:#5b5954;
+  --line:#2b2a27;
+  --amber:#e7a653;
+  --amber-soft:#b98143;
+  --green:#9cb49a;
+  --max:1180px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--paper);
+  font-family:Inter,Arial,sans-serif;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+button{
+  font:inherit;
+  color:inherit;
+}
+
+button:focus-visible{
+  outline:1px solid var(--amber);
+  outline-offset:4px;
+}
+
+a{
+  color:inherit;
+}
+
+#app{
+  min-height:100vh;
+  position:relative;
+}
+
+/* ---------- INTRO ---------- */
+
+#intro{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:#0d0d0c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:opacity .6s ease,visibility .6s ease;
+}
+
+#intro.hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.intro-inner{
+  width:min(900px,88vw);
+}
+
+.intro-kicker{
+  font:500 11px/1.4 "DM Mono",monospace;
+  letter-spacing:.18em;
+  color:var(--muted);
+  margin-bottom:32px;
+}
+
+.intro-title{
+  margin:0;
+  font-size:clamp(48px,9vw,112px);
+  line-height:.82;
+  letter-spacing:-.065em;
+  font-weight:900;
+}
+
+.intro-title span:nth-child(2){
+  font-family:"Instrument Serif",Georgia,serif;
+  font-style:italic;
+  font-weight:400;
+  color:var(--amber);
+}
+
+.intro-title span{
+  display:block;
+}
+
+.intro-copy{
+  margin-top:42px;
+  max-width:560px;
+  color:var(--body);
+  font-size:16px;
+  line-height:1.6;
+}
+
+.intro-enter{
+  margin-top:48px;
+  font:500 11px "DM Mono",monospace;
+  letter-spacing:.14em;
+  color:var(--amber);
+}
+
+/* ---------- TOP ---------- */
+
+header{
+  width:min(var(--max),92vw);
+  margin:0 auto;
+  padding:28px 0 0;
+}
+
+.topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:18px;
+}
+
+.brand{
+  font:500 10px "DM Mono",monospace;
+  letter-spacing:.16em;
+  color:var(--muted);
+}
+
+.year{
+  font:500 10px "DM Mono",monospace;
+  color:var(--dim);
+}
+
+/* ---------- CHAPTER NAV ---------- */
+
+.chapter-nav{
+  width:min(var(--max),92vw);
+  margin:0 auto;
+  padding:30px 0 0;
+}
+
+.chapter-track{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:clamp(18px,4vw,60px);
+}
+
+.chapter{
+  appearance:none;
+  border:0;
+  background:none;
+  padding:5px 0;
+  cursor:pointer;
+  color:var(--dim);
+  font-size:clamp(22px,3vw,34px);
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.05em;
+  transition:color .25s ease,transform .25s ease;
+}
+
+.chapter:hover{
+  color:var(--body);
+}
+
+.chapter.active{
+  color:var(--paper);
+  transform:translateY(-2px);
+}
+
+.chapter[data-chapter="myth"].active{
+  color:var(--amber);
+  font-family:"Instrument Serif",Georgia,serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:clamp(27px,3.4vw,40px);
+}
+
+.chapter[data-chapter="legend"].active{
+  font-weight:900;
+}
+
+.chapter-rule{
+  width:min(var(--max),92vw);
+  height:1px;
+  background:var(--line);
+  margin:22px auto 0;
+}
+
+/* ---------- MAIN ---------- */
+
+main{
+  width:min(var(--max),92vw);
+  margin:0 auto;
+  padding:50px 0 80px;
+}
+
+.record-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:30px;
+  margin-bottom:26px;
+}
+
+.record-context{
+  font:500 10px/1.4 "DM Mono",monospace;
+  color:var(--amber);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.record-count{
+  font:400 10px "DM Mono",monospace;
+  color:var(--dim);
+}
+
+/* ---------- CARD ---------- */
+
+.card-wrap{
+  position:relative;
+}
+
+.record-card{
+  position:relative;
+  min-height:510px;
+  background:var(--bg2);
+  border:1px solid var(--line);
+  padding:clamp(28px,5vw,62px);
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 270px;
+  gap:60px;
+  overflow:hidden;
+  transition:border-color .3s ease,transform .3s ease;
+}
+
+.record-card.switching{
+  opacity:.25;
+  transform:translateY(5px);
+}
+
+.record-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:var(--amber);
+  opacity:.75;
+}
+
+.record-main{
+  min-width:0;
+}
+
+.eyebrow{
+  font:500 10px/1.4 "DM Mono",monospace;
+  letter-spacing:.15em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:20px;
+}
+
+.record-title{
+  margin:0;
+  max-width:850px;
+  font-size:clamp(38px,6vw,78px);
+  line-height:.9;
+  letter-spacing:-.06em;
+  font-weight:800;
+}
+
+body.myth .record-title{
+  font-family:"Instrument Serif",Georgia,serif;
+  font-style:italic;
+  font-weight:400;
+  color:var(--amber);
+  letter-spacing:-.025em;
+}
+
+body.legend .record-title{
+  font-weight:900;
+}
+
+.record-tag{
+  margin-top:28px;
+  font:500 10px "DM Mono",monospace;
+  letter-spacing:.12em;
+  color:var(--amber);
+}
+
+.fields{
+  margin-top:48px;
+  display:grid;
+  gap:25px;
+}
+
+.field{
+  cursor:pointer;
+}
+
+.field-label{
+  font:500 9px "DM Mono",monospace;
+  color:var(--dim);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+.field-value{
+  max-width:720px;
+  color:var(--body);
+  font-size:15px;
+  line-height:1.55;
+}
+
+.field:hover .field-value{
+  color:var(--paper);
+}
+
+.record-side{
+  border-left:1px solid var(--line);
+  padding-left:30px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.side-label{
+  font:500 9px "DM Mono",monospace;
+  color:var(--dim);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.side-proof{
+  color:var(--body);
+  font:500 12px/1.6 "DM Mono",monospace;
+  text-transform:uppercase;
+}
+
+.side-transfer{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+}
+
+/* ---------- CONTROLS ---------- */
+
+.controls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:20px;
+}
+
+.nav-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.nav-btn{
+  border:1px solid var(--line);
+  background:transparent;
+  width:44px;
+  height:38px;
+  cursor:pointer;
+  color:var(--muted);
+  transition:.2s ease;
+}
+
+.nav-btn:hover{
+  color:var(--paper);
+  border-color:var(--muted);
+}
+
+.nav-hint{
+  color:var(--dim);
+  font:400 9px "DM Mono",monospace;
+  letter-spacing:.1em;
+}
+
+/* ---------- AXIS ---------- */
+
+.axis{
+  margin-top:60px;
+  position:relative;
+}
+
+.axis-line{
+  height:1px;
+  background:var(--line);
+  position:absolute;
+  left:0;
+  right:0;
+  top:9px;
+}
+
+.axis-points{
+  display:flex;
+  justify-content:space-between;
+  position:relative;
+}
+
+.axis-point{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:9px;
+}
+
+.axis-dot{
+  width:19px;
+  height:19px;
+  border:1px solid var(--dim);
+  border-radius:50%;
+  background:var(--bg);
+}
+
+.axis-point.active .axis-dot{
+  border-color:var(--amber);
+  box-shadow:0 0 0 4px rgba(231,166,83,.08);
+}
+
+.axis-label{
+  font:400 8px "DM Mono",monospace;
+  color:var(--dim);
+  letter-spacing:.08em;
+}
+
+.axis-point.active .axis-label{
+  color:var(--amber);
+}
+
+/* ---------- EVIDENCE ---------- */
+
+#evidence{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+}
+
+#evidence.open{
+  display:flex;
+}
+
+.evidence-panel{
+  width:min(900px,94vw);
+  background:#191916;
+  border:1px solid var(--line);
+  padding:35px 40px 42px;
+  margin-bottom:30px;
+  position:relative;
+}
+
+.evidence-close{
+  position:absolute;
+  top:18px;
+  right:18px;
+  border:0;
+  background:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:20px;
+}
+
+.evidence-kicker{
+  font:500 9px "DM Mono",monospace;
+  color:var(--amber);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+.evidence-title{
+  margin:15px 0 18px;
+  font-size:clamp(25px,4vw,42px);
+  letter-spacing:-.04em;
+}
+
+.evidence-text{
+  max-width:720px;
+  color:var(--body);
+  font-size:15px;
+  line-height:1.7;
+}
+
+.evidence-proof{
+  margin-top:28px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  color:var(--amber);
+  font:500 10px/1.5 "DM Mono",monospace;
+  letter-spacing:.08em;
+}
+
+/* ---------- UNO ---------- */
+
+#uno{
+  position:fixed;
+  inset:0;
+  z-index:40;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(10px);
+}
+
+#uno.open{
+  display:flex;
+}
+
+.uno-shell{
+  width:min(480px,88vw);
+  perspective:1200px;
+}
+
+.uno-card{
+  width:100%;
+  min-height:390px;
+  position:relative;
+  transform-style:preserve-3d;
+  cursor:pointer;
+  transition:transform .55s cubic-bezier(.2,.8,.2,1);
+}
+
+.uno-card.flipped{
+  transform:rotateY(180deg);
+}
+
+.uno-face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  background:var(--paper);
+  color:#111;
+  border:1px solid #ddd5c7;
+  padding:42px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.uno-back{
+  transform:rotateY(180deg);
+  background:var(--amber);
+  border-color:var(--amber);
+}
+
+.uno-label{
+  font:500 10px "DM Mono",monospace;
+  letter-spacing:.15em;
+}
+
+.uno-question{
+  font-size:clamp(30px,6vw,48px);
+  line-height:.95;
+  font-weight:900;
+  letter-spacing:-.055em;
+}
+
+.uno-answer{
+  font-size:clamp(25px,5vw,40px);
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.045em;
+}
+
+.uno-footer{
+  font:500 9px "DM Mono",monospace;
+  letter-spacing:.1em;
+}
+
+.uno-close{
+  text-align:center;
+  margin-top:20px;
+  border:0;
+  background:none;
+  color:var(--muted);
+  cursor:pointer;
+  font:500 9px "DM Mono",monospace;
+  letter-spacing:.1em;
+}
+
+/* ---------- LEGEND FINAL ---------- */
+
+#final{
+  position:fixed;
+  inset:0;
+  z-index:60;
+  background:#0d0d0c;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+#final.open{
+  display:flex;
+}
+
+.final-inner{
+  width:min(1000px,88vw);
+}
+
+.final-kicker{
+  font:500 10px "DM Mono",monospace;
+  color:var(--amber);
+  letter-spacing:.17em;
+  margin-bottom:28px;
+}
+
+.final-title{
+  margin:0;
+  font-size:clamp(46px,8vw,100px);
+  line-height:.85;
+  letter-spacing:-.065em;
+  font-weight:900;
+}
+
+.final-body{
+  max-width:650px;
+  margin-top:30px;
+  color:var(--body);
+  font-size:18px;
+  line-height:1.6;
+}
+
+.final-note{
+  margin-top:45px;
+  color:var(--dim);
+  font:500 9px "DM Mono",monospace;
+  letter-spacing:.12em;
+}
+
+.final-cone{
+  margin-top:55px;
+  width:min(700px,100%);
+  height:80px;
+  position:relative;
+}
+
+.cone-line{
+  position:absolute;
+  top:50%;
+  height:1px;
+  background:var(--amber);
+  transform-origin:left center;
+}
+
+.cone-line.one{
+  width:100%;
+  transform:rotate(-5deg);
+}
+
+.cone-line.two{
+  width:100%;
+  transform:rotate(5deg);
+}
+
+.cone-vector{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:72%;
+  height:2px;
+  background:var(--paper);
+}
+
+.cone-vector::after{
+  content:"";
+  position:absolute;
+  right:-1px;
+  top:-5px;
+  border-left:9px solid var(--paper);
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+}
+
+.final-hint{
+  margin-top:45px;
+  border:0;
+  background:none;
+  padding:0;
+  color:var(--muted);
+  cursor:pointer;
+  font:500 10px "DM Mono",monospace;
+  letter-spacing:.13em;
+}
+
+/* ---------- FOOTER ---------- */
+
+footer{
+  width:min(var(--max),92vw);
+  margin:0 auto;
+  border-top:1px solid var(--line);
+  padding:22px 0 40px;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  color:var(--dim);
+  font:400 9px "DM Mono",monospace;
+  letter-spacing:.08em;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:760px){
+
+  header{
+    padding-top:20px;
+  }
+
+  main{
+    padding-top:38px;
+  }
+
+  .chapter-track{
+    gap:24px;
+  }
+
+  .record-card{
+    grid-template-columns:1fr;
+    gap:40px;
+    min-height:auto;
+    padding:28px 24px 30px;
+  }
+
+  .record-side{
+    border-left:0;
+    border-top:1px solid var(--line);
+    padding:24px 0 0;
+    gap:25px;
+  }
+
+  .fields{
+    margin-top:38px;
+  }
+
+  .field-value{
+    font-size:14px;
+  }
+
+  .nav-hint{
+    display:none;
+  }
+
+  .axis{
+    margin-top:45px;
+  }
+
+  .axis-label{
+    font-size:7px;
+  }
+
+  .evidence-panel{
+    margin-bottom:0;
+    width:100%;
+    padding:32px 24px 35px;
+  }
+
+  .uno-face{
+    padding:30px;
+  }
+
+  .uno-card{
+    min-height:350px;
+  }
+
+  .final-body{
+    font-size:16px;
+  }
+
+  footer{
+    flex-direction:column;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    scroll-behavior:auto!important;
+    transition:none!important;
+    animation:none!important;
+  }
+}
+</style>
+</head>
+
+<body class="man">
+
+<div id="app">
+
+  <!-- INTRO -->
+  <section id="intro" aria-label="Introduction">
+    <div class="intro-inner">
+      <div class="intro-kicker">CAREER INTELLIGENCE / 2026</div>
+
+      <h1 class="intro-title">
+        <span>MAN</span>
+        <span>MYTH</span>
+        <span>LEGEND</span>
+      </h1>
+
+      <div class="intro-copy">
+        A career record told as operating evidence — not a biography.
+      </div>
+
+      <div class="intro-enter">ENTER THE RECORD ↓</div>
+    </div>
+  </section>
+
+
+  <!-- HEADER -->
+  <header>
+    <div class="topline">
+      <div class="brand">CAREER RECORD / STEFAN MAJERNIK</div>
+      <div class="year">2026</div>
+    </div>
+  </header>
+
+
+  <!-- CHAPTER NAV -->
+  <nav class="chapter-nav" aria-label="Career chapters">
+    <div class="chapter-track">
+      <button class="chapter active" data-chapter="man">MAN</button>
+      <button class="chapter" data-chapter="myth">MYTH</button>
+      <button class="chapter" data-chapter="legend">LEGEND</button>
+    </div>
+  </nav>
+
+  <div class="chapter-rule"></div>
+
+
+  <!-- MAIN RECORD -->
+  <main>
+
+    <div class="record-header">
+      <div id="recordContext" class="record-context"></div>
+      <div id="recordCount" class="record-count"></div>
+    </div>
+
+    <div class="card-wrap">
+
+      <article id="recordCard" class="record-card">
+
+        <section class="record-main">
+
+          <div id="recordEyebrow" class="eyebrow"></div>
+
+          <h2 id="recordTitle" class="record-title"></h2>
+
+          <div id="recordTag" class="record-tag"></div>
+
+          <div class="fields">
+
+            <div class="field" data-field="objective">
+              <div class="field-label">Objective</div>
+              <div id="objective" class="field-value"></div>
+            </div>
+
+            <div class="field" data-field="constraint">
+              <div class="field-label">Constraint</div>
+              <div id="constraint" class="field-value"></div>
+            </div>
+
+            <div class="field" data-field="bottleneck">
+              <div class="field-label">Bottleneck</div>
+              <div id="bottleneck" class="field-value"></div>
+            </div>
+
+            <div class="field" data-field="move">
+              <div class="field-label">Move</div>
+              <div id="move" class="field-value"></div>
+            </div>
+
+            <div class="field" data-field="transfer">
+              <div class="field-label">Transfer</div>
+              <div id="transfer" class="field-value"></div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <aside class="record-side">
+
+          <div>
+            <div class="side-label">Proof</div>
+            <div id="proof" class="side-proof"></div>
+          </div>
+
+          <div>
+            <div class="side-label">Operating signal</div>
+            <div id="sideTransfer" class="side-transfer"></div>
+          </div>
+
+        </aside>
+
+      </article>
+
+
+      <div class="controls">
+
+        <div class="nav-buttons">
+          <button id="prevBtn" class="nav-btn" aria-label="Previous record">←</button>
+          <button id="nextBtn" class="nav-btn" aria-label="Next record">→</button>
+        </div>
+
+        <div class="nav-hint">
+          SWIPE / CLICK / ARROW KEYS
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- AXIS -->
+    <div id="axis" class="axis"></div>
+
+  </main>
+
+
+  <footer>
+    <div>OBJECTIVE → CONSTRAINT → BOTTLENECK → MOVE → PROOF → TRANSFER</div>
+    <div>OPERATING RECORD</div>
+  </footer>
+
+</div>
+
+
+<!-- EVIDENCE DRAWER -->
+<section id="evidence" aria-hidden="true">
+
+  <div class="evidence-panel">
+
+    <button id="evidenceClose" class="evidence-close" aria-label="Close evidence">×</button>
+
+    <div id="evidenceKicker" class="evidence-kicker"></div>
+
+    <h2 id="evidenceTitle" class="evidence-title"></h2>
+
+    <div id="evidenceText" class="evidence-text"></div>
+
+    <div id="evidenceProof" class="evidence-proof"></div>
+
+  </div>
+
+</section>
+
+
+<!-- UNO -->
+<section id="uno" aria-hidden="true">
+
+  <div class="uno-shell">
+
+    <div id="unoCard" class="uno-card">
+
+      <div class="uno-face">
+
+        <div class="uno-label">OBJECTION</div>
+
+        <div id="unoQuestion" class="uno-question"></div>
+
+        <div class="uno-footer">CLICK TO FLIP</div>
+
+      </div>
+
+      <div class="uno-face uno-back">
+
+        <div class="uno-label">ANSWER</div>
+
+        <div id="unoAnswer" class="uno-answer"></div>
+
+        <div class="uno-footer">CLICK AGAIN TO CONTINUE</div>
+
+      </div>
+
+    </div>
+
+    <button id="unoClose" class="uno-close">CLOSE</button>
+
+  </div>
+
+</section>
+
+
+<!-- FINAL LEGEND -->
+<section id="final" aria-hidden="true">
+
+  <div class="final-inner">
+
+    <div id="finalKicker" class="final-kicker"></div>
+
+    <h1 id="finalTitle" class="final-title"></h1>
+
+    <div id="finalBody" class="final-body"></div>
+
+    <div id="finalNote" class="final-note"></div>
+
+    <div class="final-cone">
+      <div class="cone-line one"></div>
+      <div class="cone-line two"></div>
+      <div class="cone-vector"></div>
+    </div>
+
+    <button id="finalHint" class="final-hint"></button>
+
+  </div>
+
+</section>
+
+
+<script>
+(function(){
+
+"use strict";
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+const DATA = {
+
+  man: [
+
+    {
+      eyebrow:"2010–15 / MINISTRY OF JUSTICE",
+      title:"International Law",
+      objective:"Establish positions on legal and international-policy questions inside government.",
+      constraint:"International obligations, national interests and institutional procedure.",
+      bottleneck:"Legal precision only matters if it can survive contact with the institution.",
+      move:"Work through legal detail until the position is clear enough to act.",
+      transfer:"Precision became a working method: reduce ambiguity until a decision can move.",
+      tag:"PRECISION FIRST.",
+      proof:"MINISTRY OF JUSTICE / 2010–15",
+      side:"Legal and institutional work, including international and private international law.",
+      evidence:"Early institutional work built the habit of separating what is legally possible, what is institutionally possible, and what is merely desirable."
+    },
+
+    {
+      eyebrow:"2016 / ACADEMY OF FINE ARTS",
+      title:"Art",
+      objective:"Learn to build things from the perspective of aesthetics.",
+      constraint:"The thing itself still has to work.",
+      bottleneck:"It is easy to explain something that does not actually work.",
+      move:"Notice what feels wrong. Make it. Look again. Change it.",
+      transfer:"Judgment moved from argument into making: the artifact became part of the reasoning.",
+      tag:"BUILD WITH JUDGMENT.",
+      proof:"ACADEMY OF FINE ARTS / 2016",
+      side:"A different environment for learning how judgment operates through making.",
+      evidence:"Art introduced a different test for ideas: not whether they can be defended, but whether they hold up when made."
+    },
+
+    {
+      eyebrow:"2019 / THE HAGUE",
+      title:"Negotiator",
+      objective:"Reach workable international text.",
+      constraint:"Different states, legal systems and interests. No party could simply impose its preferred outcome.",
+      bottleneck:"The technically strongest position was not necessarily negotiable.",
+      move:"Negotiate language and structure different parties could actually accept.",
+      transfer:"Negotiation added another layer to legal precision: an answer has to survive other people's incentives.",
+      tag:"BUILD AGREEMENT.",
+      proof:"HCCH / 22ND DIPLOMATIC SESSION / 18 JUN — 2 JUL 2019",
+      side:"Negotiated on behalf of the Slovak Republic and EU Member States.",
+      evidence:"At the HCCH 22nd Diplomatic Session in the Peace Palace, The Hague, 18 June–2 July 2019, the Judgments Convention was negotiated and adopted on 2 July 2019."
+    },
+
+    {
+      eyebrow:"GOVERNMENT / MINISTERIAL ADVISORY",
+      title:"Trusted With Decisions",
+      objective:"Turn legal and policy questions into usable advice.",
+      constraint:"Decisions carried political, institutional and practical consequences.",
+      bottleneck:"Advice is useful only if it helps make a decision.",
+      move:"Bring legal precision, preparation and judgment close to the decision.",
+      transfer:"The job became less about producing an answer and more about making the answer usable.",
+      tag:"MAKE THE DECISION.",
+      proof:"MINISTERIAL ADVISORY / GOVERNMENT",
+      side:"Counselled ministers and worked close to consequential institutional decisions.",
+      evidence:"Ministerial advisory work sharpened the distinction between being correct and being useful at the point where a decision has to be made."
+    },
+
+    {
+      eyebrow:"2023–24 / MINISTRY OF CULTURE",
+      title:"Director",
+      objective:"Make institutional work move in a politically and administratively difficult environment.",
+      constraint:"Public-sector procedure, policy and organisational reality.",
+      bottleneck:"Formal structure does not always describe how the system actually works.",
+      move:"Work inside the institution and deal with the problem in front of you.",
+      transfer:"Institutional experience added system-reading: identify where the actual constraint lives.",
+      tag:"READ THE SYSTEM.",
+      proof:"MINISTRY OF CULTURE / 2023–24",
+      side:"Director-level responsibility inside a public institution.",
+      evidence:"The role required operating between formal procedure, policy objectives, organisational capacity and the practical reality of getting work through."
+    },
+
+    {
+      eyebrow:"OTVORENÁ KULTÚRA!",
+      title:"Civic Pressure",
+      objective:"Move an issue when the people affected do not control the institution.",
+      constraint:"Formal authority and actual influence are different things.",
+      bottleneck:"Normal institutional channels can stop working.",
+      move:"Coordinate people, policy and pressure to create another route.",
+      transfer:"When the channel fails, change the channel rather than endlessly pushing the same door.",
+      tag:"CHANGE THE CHANNEL.",
+      proof:"OTVORENÁ KULTÚRA! / CIVIC MOVEMENT",
+      side:"Culture policy, advocacy, stakeholder coordination and civic pressure.",
+      evidence:"Otvorená Kultúra! became an example of operating outside formal institutional authority while still trying to move institutional outcomes."
+    },
+
+    {
+      eyebrow:"2023–24 / STANFORD",
+      title:"Game Theory",
+      objective:"Understand decisions involving different incentives and imperfect information.",
+      constraint:"The interests of participants are rarely aligned.",
+      bottleneck:"An outcome depends on interaction, not just the quality of one move.",
+      move:"Study the interaction structure before deciding the move.",
+      transfer:"Game theory supplied a compact model for reading incentives, reactions and second-order effects.",
+      tag:"READ THE GAME.",
+      proof:"STANFORD / GAME THEORY / 2023–24",
+      side:"Formal study of strategic interaction.",
+      evidence:"The value was not collecting another credential. It was adding a reusable way of seeing situations in which the next move depends on what others will do."
+    },
+
+    {
+      eyebrow:"2025+ / METAHRY",
+      title:"Game Architecture",
+      objective:"Make a child figure something out rather than simply receive an answer.",
+      constraint:"It still has to be a game — not a disguised lesson.",
+      bottleneck:"Teaching is easy to mistake for understanding.",
+      move:"Put learning into mechanics: prediction, testing, correction, reflection and transfer.",
+      transfer:"Metacognition turns the operating method inward: the player learns how to improve the way they learn.",
+      tag:"BUILD UNDERSTANDING.",
+      proof:"METAHRY / UMIVERSE / APPLIED METACOGNITION",
+      side:"Game architecture and applied metacognition for early literacy.",
+      evidence:"UMIVERSE is being designed around the principle that children should not merely receive answers. They should experience the loop that produces understanding."
+    },
+
+    {
+      eyebrow:"NOW / BUILDING",
+      title:"Technology",
+      objective:"Turn ideas into working systems.",
+      constraint:"The artifact has to work.",
+      bottleneck:"There is always a gap between the idea and the thing.",
+      move:"Build. Test. Change. Build again.",
+      transfer:"Technology closes the loop: ideas become artifacts that can be tested rather than merely discussed.",
+      tag:"MAKE IT REAL.",
+      proof:"HTML / CSS / JAVASCRIPT / THREE.JS",
+      side:"Building interactive systems directly.",
+      evidence:"The technical layer is deliberately practical: enough HTML, CSS, JavaScript and Three.js to turn concepts into inspectable, working artifacts."
+    }
+
+  ],
+
+
+  myth: [
+
+    {
+      eyebrow:"MYTH 01 / THE HAGUE",
+      title:"When Nobody Owns the Answer",
+      objective:"Reach agreement where nobody has authority to dictate the answer.",
+      constraint:"Different states, legal systems and interests.",
+      bottleneck:"The best position for one party is not necessarily negotiable.",
+      move:"Construct language and structure enough parties could accept.",
+      transfer:"The method: find the smallest workable bridge between incompatible positions.",
+      tag:"BUILD AGREEMENT.",
+      proof:"THE HAGUE / 2019",
+      side:"International negotiation under competing national interests.",
+      evidence:"The 2019 HCCH Diplomatic Session required agreement across different legal systems and national interests. The outcome depended on negotiated language rather than unilateral authority."
+    },
+
+    {
+      eyebrow:"MYTH 02 / COVID",
+      title:"The Workable Answer",
+      objective:"Create a workable solution for creatives whose existing contracts became difficult or impossible during COVID.",
+      constraint:"The mechanism had to work across a large number of contracts and situations.",
+      bottleneck:"A technically defensible answer could still be disastrous for people least able to absorb the loss.",
+      move:"Help create a mass-contract adoption mechanism, accepting imperfect outcomes where necessary to protect smaller creatives.",
+      transfer:"A solution is not neutral if its costs fall entirely on the weakest participant.",
+      tag:"MAKE IT WORK.",
+      proof:"COVID / MASS-CONTRACT ADOPTION MECHANISM",
+      side:"Contract mechanism designed around practical consequences for smaller creatives.",
+      evidence:"The situation required more than identifying what could legally be done. The workable mechanism had to consider who would carry the downside when the original assumptions behind contracts collapsed."
+    },
+
+    {
+      eyebrow:"MYTH 03 / OTVORENÁ KULTÚRA!",
+      title:"When the Channel Stops Working",
+      objective:"Create movement when normal institutional channels stop producing it.",
+      constraint:"Affected people may not control the institution.",
+      bottleneck:"Formal authority and actual influence can diverge.",
+      move:"Use civic coordination, policy work and stakeholder pressure to create another route.",
+      transfer:"Influence can be engineered by changing the structure around a decision.",
+      tag:"CHANGE THE CHANNEL.",
+      proof:"OTVORENÁ KULTÚRA! / CIVIC PRESSURE",
+      side:"Civic organising, policy and stakeholder coordination.",
+      evidence:"The case illustrates a recurring pattern: when the formal route becomes ineffective, create enough external coordination to make the issue impossible to ignore."
+    }
+
+  ],
+
+
+  legend: [
+
+    {
+      eyebrow:"NOW / THE STACK",
+      title:"The Generalist",
+      objective:"Worthwhile problems increasingly cross disciplinary boundaries.",
+      constraint:"No single discipline contains the whole problem.",
+      bottleneck:"Useful parts of different fields rarely arrive pre-combined.",
+      move:"Bring together legal precision, negotiation, institutional experience, aesthetic judgment, systems thinking and building.",
+      transfer:"The stack is useful only if each layer changes how the next problem is approached.",
+      tag:"READY FOR THE NEXT PROBLEM.",
+      proof:"LAW → NEGOTIATION → INSTITUTIONS → ART → CULTURE → TECHNOLOGY → GAMES → METACOGNITION",
+      side:"Not mastery of everything. Transfer of useful methods.",
+      evidence:"The claim is not breadth for its own sake. It is that different environments produced directional skills that can now compound when applied to unfamiliar problems."
+    }
+
+  ]
+
+};
+
+
+/* =========================================================
+   UNO OBJECTIONS
+========================================================= */
+
+const UNO = [
+
+  ["GENERALIST?","Only if the skills compound."],
+  ["TOO MANY DIRECTIONS?","The problems kept crossing lanes."],
+  ["NO CHIEF OF STAFF TITLE?","Look at the situations, not the title."],
+  ["CAREER CHANGE?","Not a reset. A stack."],
+  ["TOO ACADEMIC?","The theory gets tested by what I build."],
+  ["TOO CREATIVE?","Five years in Justice. Government negotiation. Ministerial advisory."],
+  ["IDEA PERSON?","Give me the task. Then tell me what has to be true when we're done."],
+  ["CAN HE EXECUTE?","Ideas are inputs. Problems are constraints."],
+  ["IS THIS JUST STORYTELLING?","Then open the evidence."]
+];
+
+
+/* =========================================================
+   FINAL SEQUENCE
+========================================================= */
+
+const FINAL = [
+
+  {
+    kicker:"THE OPERATOR",
+    title:"The pattern is not a title.",
+    body:"It is a way of entering unfamiliar problems.",
+    note:"01 / ENTER THE PROBLEM"
+  },
+
+  {
+    kicker:"SPEAKS LEGAL.",
+    title:"Rules. Language. Precision.",
+    body:"And what can actually be done.",
+    note:"02 / FIND THE CONSTRAINT"
+  },
+
+  {
+    kicker:"NAVIGATES UNCERTAINTY.",
+    title:"The map is incomplete.",
+    body:"The constraints move. The answer still has to be built.",
+    note:"03 / MOVE WITHOUT THE MAP"
+  },
+
+  {
+    kicker:"STACKS DIRECTIONAL SKILLS.",
+    title:"Law → negotiation → institutions → aesthetics → culture → technology → games → metacognition.",
+    body:"Different environments. Reusable methods.",
+    note:"04 / BUILD THE STACK"
+  },
+
+  {
+    kicker:"THE STACK COMPOUNDS.",
+    title:"Each field changes the next problem.",
+    body:"The point isn't knowing everything. It's knowing how to enter the problem.",
+    note:"05 / COMPOUND"
+  },
+
+  {
+    kicker:"READY FOR THE NEXT PROBLEM.",
+    title:"The generalist.",
+    body:"Low velocity. High leverage.",
+    note:"06 / READY"
+  }
+
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let chapter = "man";
+let index = 0;
+let unoIndex = 0;
+let finalIndex = 0;
+let introOpen = true;
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const intro = document.getElementById("intro");
+
+const recordCard = document.getElementById("recordCard");
+const recordContext = document.getElementById("recordContext");
+const recordCount = document.getElementById("recordCount");
+const recordEyebrow = document.getElementById("recordEyebrow");
+const recordTitle = document.getElementById("recordTitle");
+const recordTag = document.getElementById("recordTag");
+
+const objective = document.getElementById("objective");
+const constraint = document.getElementById("constraint");
+const bottleneck = document.getElementById("bottleneck");
+const move = document.getElementById("move");
+const transfer = document.getElementById("transfer");
+
+const proof = document.getElementById("proof");
+const sideTransfer = document.getElementById("sideTransfer");
+
+const axis = document.getElementById("axis");
+
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+const evidence = document.getElementById("evidence");
+const evidenceClose = document.getElementById("evidenceClose");
+const evidenceKicker = document.getElementById("evidenceKicker");
+const evidenceTitle = document.getElementById("evidenceTitle");
+const evidenceText = document.getElementById("evidenceText");
+const evidenceProof = document.getElementById("evidenceProof");
+
+const uno = document.getElementById("uno");
+const unoCard = document.getElementById("unoCard");
+const unoQuestion = document.getElementById("unoQuestion");
+const unoAnswer = document.getElementById("unoAnswer");
+const unoClose = document.getElementById("unoClose");
+
+const final = document.getElementById("final");
+const finalKicker = document.getElementById("finalKicker");
+const finalTitle = document.getElementById("finalTitle");
+const finalBody = document.getElementById("finalBody");
+const finalNote = document.getElementById("finalNote");
+const finalHint = document.getElementById("finalHint");
+
+
+/* =========================================================
+   CHAPTER
+========================================================= */
+
+function setChapter(nextChapter){
+
+  chapter = nextChapter;
+  index = 0;
+
+  document.body.classList.remove("man","myth","legend");
+  document.body.classList.add(chapter);
+
+  document.querySelectorAll(".chapter").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.chapter === chapter
+    );
+  });
+
+  render();
+
+}
+
+
+function renderChapterContext(){
+
+  const contexts = {
+    man:"MAN / THE RECORD",
+    myth:"MYTH / THE CASES",
+    legend:"LEGEND / THE SYNTHESIS"
+  };
+
+  recordContext.textContent = contexts[chapter];
+
+}
+
+
+/* =========================================================
+   RENDER RECORD
+========================================================= */
+
+function render(){
+
+  const records = DATA[chapter];
+  const item = records[index];
+
+  renderChapterContext();
+
+  recordCount.textContent =
+    String(index + 1).padStart(2,"0") +
+    " / " +
+    String(records.length).padStart(2,"0");
+
+  recordEyebrow.textContent = item.eyebrow;
+  recordTitle.textContent = item.title;
+  recordTag.textContent = item.tag;
+
+  objective.textContent = item.objective;
+  constraint.textContent = item.constraint;
+  bottleneck.textContent = item.bottleneck;
+  move.textContent = item.move;
+  transfer.textContent = item.transfer;
+
+  proof.textContent = item.proof;
+  sideTransfer.textContent = item.side;
+
+  prevBtn.disabled = false;
+  nextBtn.disabled = false;
+
+  renderAxis();
+
+}
+
+
+/* =========================================================
+   AXIS
+========================================================= */
+
+function renderAxis(){
+
+  const records = DATA[chapter];
+
+  axis.innerHTML = `
+    <div class="axis-line"></div>
+    <div class="axis-points">
+      ${records.map((item,i)=>`
+        <div class="axis-point ${i === index ? "active" : ""}">
+          <div class="axis-dot"></div>
+          <div class="axis-label">${String(i+1).padStart(2,"0")}</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function next(){
+
+  closeEvidence();
+
+  const records = DATA[chapter];
+
+  if(chapter === "man"){
+
+    if(index < records.length - 1){
+      transitionTo(index + 1);
+      return;
+    }
+
+    openUno();
+    return;
+  }
+
+
+  if(chapter === "myth"){
+
+    if(index < records.length - 1){
+      transitionTo(index + 1);
+      return;
+    }
+
+    setChapter("legend");
+    return;
+  }
+
+
+  if(chapter === "legend"){
+
+    openFinal();
+    return;
+  }
+
+}
+
+
+function prev(){
+
+  closeEvidence();
+
+  if(index > 0){
+    transitionTo(index - 1);
+    return;
+  }
+
+  if(chapter === "myth"){
+    setChapter("man");
+    index = DATA.man.length - 1;
+    render();
+    return;
+  }
+
+  if(chapter === "legend"){
+    setChapter("myth");
+    index = DATA.myth.length - 1;
+    render();
+    return;
+  }
+
+}
+
+
+function transitionTo(nextIndex){
+
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    index = nextIndex;
+    render();
+    return;
+  }
+
+  recordCard.classList.add("switching");
+
+  setTimeout(()=>{
+    index = nextIndex;
+    render();
+    recordCard.classList.remove("switching");
+  },180);
+
+}
+
+
+/* =========================================================
+   EVIDENCE
+========================================================= */
+
+function openEvidence(field){
+
+  const item = DATA[chapter][index];
+
+  evidenceKicker.textContent = item.eyebrow;
+  evidenceTitle.textContent = item.title;
+
+  const fieldText = {
+    objective:item.objective,
+    constraint:item.constraint,
+    bottleneck:item.bottleneck,
+    move:item.move,
+    transfer:item.transfer
+  };
+
+  evidenceText.textContent = fieldText[field] || item.evidence;
+  evidenceProof.textContent = item.proof;
+
+  evidence.classList.add("open");
+  evidence.setAttribute("aria-hidden","false");
+
+}
+
+
+function closeEvidence(){
+
+  evidence.classList.remove("open");
+  evidence.setAttribute("aria-hidden","true");
+
+}
+
+
+/* =========================================================
+   UNO
+========================================================= */
+
+function openUno(){
+
+  unoIndex = Math.floor(Math.random() * UNO.length);
+
+  unoQuestion.textContent = UNO[unoIndex][0];
+  unoAnswer.textContent = UNO[unoIndex][1];
+
+  unoCard.classList.remove("flipped");
+
+  uno.classList.add("open");
+  uno.setAttribute("aria-hidden","false");
+
+}
+
+
+function flipUno(){
+
+  if(!unoCard.classList.contains("flipped")){
+    unoCard.classList.add("flipped");
+    return;
+  }
+
+  uno.classList.remove("open");
+  uno.setAttribute("aria-hidden","true");
+
+  setChapter("myth");
+
+}
+
+
+function closeUno(){
+
+  uno.classList.remove("open");
+  uno.setAttribute("aria-hidden","true");
+
+}
+
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+function openFinal(){
+
+  finalIndex = 0;
+  renderFinal();
+
+  final.classList.add("open");
+  final.setAttribute("aria-hidden","false");
+
+}
+
+
+function renderFinal(){
+
+  const item = FINAL[finalIndex];
+
+  finalKicker.textContent = item.kicker;
+  finalTitle.textContent = item.title;
+  finalBody.textContent = item.body;
+  finalNote.textContent = item.note;
+
+  if(finalIndex === FINAL.length - 1){
+    finalHint.textContent = "← RETURN TO THE RECORD";
+  }else{
+    finalHint.textContent = "CLICK TO CONTINUE →";
+  }
+
+}
+
+
+function nextFinal(){
+
+  if(finalIndex < FINAL.length - 1){
+    finalIndex++;
+    renderFinal();
+    return;
+  }
+
+  final.classList.remove("open");
+  final.setAttribute("aria-hidden","true");
+
+  setChapter("legend");
+
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+function enterRecord(){
+
+  if(!introOpen) return;
+
+  introOpen = false;
+  intro.classList.add("hidden");
+
+}
+
+
+intro.addEventListener("click",enterRecord);
+
+
+/* =========================================================
+   CHAPTER BUTTONS
+========================================================= */
+
+document.querySelectorAll(".chapter").forEach(btn=>{
+
+  btn.addEventListener("click",()=>{
+
+    const target = btn.dataset.chapter;
+
+    if(target === "myth" && chapter === "man"){
+      setChapter("myth");
+      return;
+    }
+
+    if(target === "legend"){
+      setChapter("legend");
+      return;
+    }
+
+    setChapter(target);
+
+  });
+
+});
+
+
+/* =========================================================
+   RECORD FIELDS
+========================================================= */
+
+document.querySelectorAll(".field").forEach(field=>{
+
+  field.addEventListener("click",()=>{
+
+    openEvidence(field.dataset.field);
+
+  });
+
+});
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+prevBtn.addEventListener("click",prev);
+nextBtn.addEventListener("click",next);
+
+evidenceClose.addEventListener("click",closeEvidence);
+
+evidence.addEventListener("click",e=>{
+
+  if(e.target === evidence){
+    closeEvidence();
+  }
+
+});
+
+unoCard.addEventListener("click",flipUno);
+
+unoClose.addEventListener("click",closeUno);
+
+uno.addEventListener("click",e=>{
+
+  if(e.target === uno){
+    closeUno();
+  }
+
+});
+
+finalHint.addEventListener("click",()=>{
+
+  if(finalIndex === FINAL.length - 1){
+    final.classList.remove("open");
+    final.setAttribute("aria-hidden","true");
+    setChapter("legend");
+  }else{
+    nextFinal();
+  }
+
+});
+
+final.addEventListener("click",e=>{
+
+  if(e.target === final){
+    nextFinal();
+  }
+
+});
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener("keydown",e=>{
+
+  if(introOpen){
+
+    if(
+      e.key === "Enter" ||
+      e.key === " " ||
+      e.key === "ArrowRight"
+    ){
+      e.preventDefault();
+      enterRecord();
+    }
+
+    return;
+  }
+
+
+  if(e.key === "Escape"){
+
+    closeEvidence();
+    closeUno();
+
+    if(final.classList.contains("open")){
+      final.classList.remove("open");
+      final.setAttribute("aria-hidden","true");
+    }
+
+    return;
+  }
+
+
+  if(final.classList.contains("open")){
+
+    if(
+      e.key === "ArrowRight" ||
+      e.key === " " ||
+      e.key === "Enter"
+    ){
+      e.preventDefault();
+      nextFinal();
+    }
+
+    if(e.key === "ArrowLeft"){
+      e.preventDefault();
+
+      if(finalIndex > 0){
+        finalIndex--;
+        renderFinal();
+      }
+    }
+
+    return;
+  }
+
+
+  if(uno.classList.contains("open")){
+
+    if(
+      e.key === " " ||
+      e.key === "Enter" ||
+      e.key === "ArrowRight"
+    ){
+      e.preventDefault();
+      flipUno();
+    }
+
+    return;
+  }
+
+
+  if(e.key === "ArrowRight"){
+    e.preventDefault();
+    next();
+  }
+
+  if(e.key === "ArrowLeft"){
+    e.preventDefault();
+    prev();
+  }
+
+});
+
+
+/* =========================================================
+   TOUCH
+========================================================= */
+
+document.addEventListener("touchstart",e=>{
+
+  if(!e.changedTouches.length) return;
+
+  touchStartX = e.changedTouches[0].clientX;
+  touchStartY = e.changedTouches[0].clientY;
+
+},{passive:true});
+
+
+document.addEventListener("touchend",e=>{
+
+  if(!e.changedTouches.length) return;
+
+  const endX = e.changedTouches[0].clientX;
+  const endY = e.changedTouches[0].clientY;
+
+  const dx = endX - touchStartX;
+  const dy = endY - touchStartY;
+
+  if(Math.abs(dx) < 50) return;
+  if(Math.abs(dx) < Math.abs(dy)) return;
+
+  if(final.classList.contains("open")){
+
+    if(dx < 0){
+      nextFinal();
+    }else if(finalIndex > 0){
+      finalIndex--;
+      renderFinal();
+    }
+
+    return;
+  }
+
+  if(uno.classList.contains("open")) return;
+  if(evidence.classList.contains("open")) return;
+
+  if(dx < 0){
+    next();
+  }else{
+    prev();
+  }
+
+},{passive:true});
+
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+
+render();
+
+})();
+</script>
+
+</body>
+</html>
