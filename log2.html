@@ -1,0 +1,1754 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MAN / MYTH / LEGEND — Build Log</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background:#050608;
+  color:#edf8fa;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    monospace;
+}
+
+#app{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#050608;
+}
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+#scene{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(
+      ellipse at 52% 48%,
+      rgba(40,72,82,.20),
+      transparent 43%
+    ),
+    radial-gradient(
+      ellipse at 50% 100%,
+      rgba(255,255,255,.035),
+      transparent 38%
+    ),
+    #050608;
+}
+
+svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* Cone */
+.cone-shell{
+  fill:url(#coneFill);
+  stroke:rgba(220,250,255,.14);
+  stroke-width:1;
+}
+
+.cone-rim{
+  fill:none;
+  stroke:rgba(220,250,255,.10);
+  stroke-width:1;
+}
+
+.cone-edge{
+  fill:none;
+  stroke:rgba(220,250,255,.12);
+  stroke-width:1;
+}
+
+.cone-ring{
+  fill:none;
+  stroke:rgba(220,250,255,.055);
+  stroke-width:1;
+}
+
+.axis{
+  fill:none;
+  stroke:rgba(220,250,255,.035);
+  stroke-width:1;
+  stroke-dasharray:4 10;
+}
+
+/* Inner-surface trajectories */
+.surface-ghost{
+  fill:none;
+  stroke:rgba(120,210,225,.08);
+  stroke-width:1.5;
+  stroke-dasharray:5 11;
+}
+
+.surface-path{
+  fill:none;
+  stroke:rgba(130,220,235,.22);
+  stroke-width:1.5;
+}
+
+.surface-hot{
+  fill:none;
+  stroke:rgba(220,250,255,.70);
+  stroke-width:2;
+}
+
+/* Nodes */
+.node{
+  fill:#071014;
+  stroke:rgba(190,240,248,.42);
+  stroke-width:1.2;
+}
+
+.node-dot{
+  fill:#e2fcff;
+  filter:url(#glow);
+}
+
+.node-label{
+  fill:rgba(238,250,252,.76);
+  font-size:10px;
+  letter-spacing:2px;
+}
+
+.node-sub{
+  fill:rgba(238,250,252,.30);
+  font-size:8px;
+  letter-spacing:1.2px;
+}
+
+/* Signal */
+.signalGlow{
+  fill:#8deaf5;
+  opacity:.22;
+  filter:url(#glowBig);
+}
+
+.signalCore{
+  fill:#f1ffff;
+  filter:url(#glow);
+}
+
+/* =========================================================
+   HUD
+========================================================= */
+
+#hud{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.top{
+  position:absolute;
+  left:28px;
+  right:28px;
+  top:22px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+.eyebrow{
+  font-size:10px;
+  letter-spacing:3px;
+  color:rgba(255,255,255,.38);
+}
+
+.title{
+  margin-top:7px;
+  font-size:clamp(22px,3vw,42px);
+  letter-spacing:-1px;
+}
+
+.title span{
+  color:rgba(255,255,255,.30);
+}
+
+.status{
+  text-align:right;
+  font-size:10px;
+  line-height:1.7;
+  color:rgba(255,255,255,.35);
+}
+
+.status b{
+  color:#e1fbff;
+  font-weight:500;
+}
+
+/* Phase */
+#phase{
+  position:absolute;
+  right:28px;
+  top:112px;
+  width:270px;
+  text-align:right;
+}
+
+.phase-name{
+  font-size:10px;
+  letter-spacing:2.5px;
+  color:rgba(255,255,255,.38);
+}
+
+.phase-big{
+  margin-top:7px;
+  font-size:clamp(18px,2.2vw,30px);
+  color:rgba(238,251,253,.88);
+}
+
+.phase-copy{
+  margin-top:8px;
+  font-size:9px;
+  line-height:1.65;
+  color:rgba(255,255,255,.28);
+}
+
+/* =========================================================
+   TERMINAL
+========================================================= */
+
+#terminal{
+  position:absolute;
+
+  left:28px;
+  bottom:28px;
+
+  width:min(680px,calc(100% - 56px));
+  height:min(320px,44vh);
+
+  background:rgba(4,7,9,.80);
+
+  border:1px solid rgba(255,255,255,.12);
+
+  box-shadow:
+    0 20px 80px rgba(0,0,0,.45);
+
+  backdrop-filter:blur(13px);
+
+  pointer-events:auto;
+  overflow:hidden;
+}
+
+.term-head{
+  height:34px;
+
+  border-bottom:1px solid rgba(255,255,255,.09);
+
+  display:flex;
+  align-items:center;
+
+  padding:0 12px;
+  gap:7px;
+
+  color:rgba(255,255,255,.30);
+  font-size:9px;
+  letter-spacing:1.5px;
+}
+
+.dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:rgba(255,255,255,.20);
+}
+
+.term-title{
+  margin-left:5px;
+}
+
+#log{
+  padding:14px 16px 20px;
+
+  height:calc(100% - 34px);
+
+  overflow:hidden;
+
+  font-size:11px;
+  line-height:1.62;
+}
+
+.line{
+  white-space:pre-wrap;
+}
+
+.user{
+  color:#eafcff;
+}
+
+.ai{
+  color:rgba(215,240,243,.54);
+}
+
+.pivot{
+  color:#d8f8fb;
+}
+
+.build{
+  color:#9eeaf2;
+}
+
+.fail{
+  color:#ffb4a8;
+}
+
+.return{
+  color:#ead9aa;
+}
+
+.crys{
+  color:#c7f3cf;
+}
+
+.ship{
+  color:#ffffff;
+}
+
+.dim{
+  color:rgba(255,255,255,.26);
+}
+
+.cursor{
+  display:inline-block;
+
+  width:7px;
+  height:12px;
+
+  background:#d0fbff;
+
+  vertical-align:-2px;
+
+  animation:blink 1s steps(1) infinite;
+}
+
+@keyframes blink{
+  50%{opacity:0}
+}
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+#controls{
+  position:absolute;
+  right:28px;
+  bottom:28px;
+
+  display:flex;
+  gap:8px;
+
+  pointer-events:auto;
+}
+
+button{
+  appearance:none;
+
+  background:rgba(8,12,15,.78);
+
+  color:rgba(240,250,251,.72);
+
+  border:1px solid rgba(255,255,255,.14);
+
+  padding:10px 13px;
+
+  font:
+    10px
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+
+  letter-spacing:1.5px;
+
+  cursor:pointer;
+}
+
+button:hover{
+  border-color:rgba(220,250,255,.38);
+  color:#fff;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:700px){
+
+  .top{
+    left:16px;
+    right:16px;
+    top:16px;
+  }
+
+  .status{
+    display:none;
+  }
+
+  #phase{
+    right:16px;
+    top:82px;
+    width:210px;
+  }
+
+  #terminal{
+    left:16px;
+    bottom:16px;
+
+    width:calc(100% - 32px);
+    height:285px;
+  }
+
+  #controls{
+    right:16px;
+    bottom:16px;
+
+    transform:translateY(-302px);
+  }
+
+  .node-label{
+    font-size:8px;
+  }
+
+  .node-sub{
+    display:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <!-- =====================================================
+       VISUAL FIELD
+  ====================================================== -->
+
+  <div id="scene">
+
+    <svg
+      viewBox="0 0 1200 800"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+
+      <defs>
+
+        <linearGradient
+          id="coneFill"
+          x1="0"
+          y1="0"
+          x2="1"
+          y2="1"
+        >
+          <stop
+            offset="0"
+            stop-color="#0d171b"
+            stop-opacity=".48"
+          />
+
+          <stop
+            offset=".5"
+            stop-color="#091115"
+            stop-opacity=".22"
+          />
+
+          <stop
+            offset="1"
+            stop-color="#020405"
+            stop-opacity=".70"
+          />
+        </linearGradient>
+
+        <filter
+          id="glow"
+          x="-300%"
+          y="-300%"
+          width="600%"
+          height="600%"
+        >
+          <feGaussianBlur
+            stdDeviation="3"
+            result="blur"
+          />
+
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <filter
+          id="glowBig"
+          x="-300%"
+          y="-300%"
+          width="600%"
+          height="600%"
+        >
+          <feGaussianBlur
+            stdDeviation="9"
+            result="blur"
+          />
+
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+      </defs>
+
+
+      <!-- =================================================
+           THE CONE
+
+           Wide end = uncertainty
+           Narrow end = convergence
+      ================================================== -->
+
+      <path
+        class="cone-shell"
+        d="
+          M90 145
+
+          C260 85
+           420 80
+           580 112
+
+          C760 148
+           925 232
+           1080 386
+
+          L1080 414
+
+          C925 568
+           760 652
+           580 688
+
+          C420 720
+           260 715
+           90 655
+
+          Z
+        "
+      />
+
+      <!-- upper rim -->
+      <path
+        class="cone-rim"
+        d="
+          M90 145
+          C260 85
+           420 80
+           580 112
+          C760 148
+           925 232
+           1080 386
+        "
+      />
+
+      <!-- lower rim -->
+      <path
+        class="cone-rim"
+        d="
+          M90 655
+          C260 715
+           420 720
+           580 688
+          C760 652
+           925 568
+           1080 414
+        "
+      />
+
+      <!-- perspective edges -->
+      <path
+        class="cone-edge"
+        d="
+          M90 145
+          C330 250
+           730 318
+           1080 400
+        "
+      />
+
+      <path
+        class="cone-edge"
+        d="
+          M90 655
+          C330 550
+           730 482
+           1080 400
+        "
+      />
+
+      <!-- central axis -->
+      <path
+        class="axis"
+        d="M90 400 L1080 400"
+      />
+
+
+      <!-- =================================================
+           PERSPECTIVE RINGS
+      ================================================== -->
+
+      <ellipse
+        class="cone-ring"
+        cx="250"
+        cy="400"
+        rx="160"
+        ry="205"
+      />
+
+      <ellipse
+        class="cone-ring"
+        cx="430"
+        cy="400"
+        rx="120"
+        ry="154"
+      />
+
+      <ellipse
+        class="cone-ring"
+        cx="610"
+        cy="400"
+        rx="83"
+        ry="107"
+      />
+
+      <ellipse
+        class="cone-ring"
+        cx="790"
+        cy="400"
+        rx="48"
+        ry="63"
+      />
+
+      <ellipse
+        class="cone-ring"
+        cx="935"
+        cy="400"
+        rx="25"
+        ry="34"
+      />
+
+
+      <!-- =================================================
+           GHOST POSSIBILITIES
+
+           The cone contains alternate trajectories.
+      ================================================== -->
+
+      <path
+        class="surface-ghost"
+        d="
+          M105 185
+          C285 125
+           410 180
+           520 278
+          C650 393
+           770 485
+           1080 398
+        "
+      />
+
+      <path
+        class="surface-ghost"
+        d="
+          M105 620
+          C280 675
+           400 595
+           520 505
+          C665 396
+           800 292
+           1080 402
+        "
+      />
+
+
+      <!-- =================================================
+           MAIN TRAJECTORY
+
+           This is deliberately attached to the
+           INNER SURFACE of the cone.
+
+           Wide / exploratory
+                    ↓
+           skill stacking
+                    ↓
+           convergence
+      ================================================== -->
+
+      <path
+        id="surfacePath"
+        class="surface-path"
+        d="
+          M105 185
+
+          C245 130
+           365 145
+           455 208
+
+          C535 264
+           548 354
+           620 404
+
+          C700 460
+           770 510
+           850 475
+
+          C940 435
+           1010 414
+           1080 400
+        "
+      />
+
+      <path
+        id="surfaceHot"
+        class="surface-hot"
+        d="
+          M105 185
+
+          C245 130
+           365 145
+           455 208
+
+          C535 264
+           548 354
+           620 404
+
+          C700 460
+           770 510
+           850 475
+
+          C940 435
+           1010 414
+           1080 400
+        "
+      />
+
+
+      <!-- =================================================
+           SKILL NODES
+
+           Evidence, not labels.
+      ================================================== -->
+
+      <!-- LAW -->
+
+      <g>
+
+        <circle
+          class="node"
+          cx="205"
+          cy="155"
+          r="21"
+        />
+
+        <circle
+          class="node-dot"
+          cx="205"
+          cy="155"
+          r="3"
+        />
+
+        <text
+          class="node-label"
+          x="205"
+          y="123"
+          text-anchor="middle"
+        >
+          LAW
+        </text>
+
+        <text
+          class="node-sub"
+          x="205"
+          y="139"
+          text-anchor="middle"
+        >
+          PRECISION
+        </text>
+
+      </g>
+
+
+      <!-- CULTURE -->
+
+      <g>
+
+        <circle
+          class="node"
+          cx="420"
+          cy="181"
+          r="21"
+        />
+
+        <circle
+          class="node-dot"
+          cx="420"
+          cy="181"
+          r="3"
+        />
+
+        <text
+          class="node-label"
+          x="420"
+          y="149"
+          text-anchor="middle"
+        >
+          CULTURE
+        </text>
+
+        <text
+          class="node-sub"
+          x="420"
+          y="165"
+          text-anchor="middle"
+        >
+          CONTEXT
+        </text>
+
+      </g>
+
+
+      <!-- GAMES -->
+
+      <g>
+
+        <circle
+          class="node"
+          cx="545"
+          cy="310"
+          r="21"
+        />
+
+        <circle
+          class="node-dot"
+          cx="545"
+          cy="310"
+          r="3"
+        />
+
+        <text
+          class="node-label"
+          x="545"
+          y="278"
+          text-anchor="middle"
+        >
+          GAMES
+        </text>
+
+        <text
+          class="node-sub"
+          x="545"
+          y="294"
+          text-anchor="middle"
+        >
+          SYSTEMS
+        </text>
+
+      </g>
+
+
+      <!-- TECH -->
+
+      <g>
+
+        <circle
+          class="node"
+          cx="735"
+          cy="487"
+          r="21"
+        />
+
+        <circle
+          class="node-dot"
+          cx="735"
+          cy="487"
+          r="3"
+        />
+
+        <text
+          class="node-label"
+          x="735"
+          y="527"
+          text-anchor="middle"
+        >
+          TECH
+        </text>
+
+        <text
+          class="node-sub"
+          x="735"
+          y="543"
+          text-anchor="middle"
+        >
+          LEVERAGE
+        </text>
+
+      </g>
+
+
+      <!-- STRATEGY -->
+
+      <g>
+
+        <circle
+          class="node"
+          cx="935"
+          cy="438"
+          r="21"
+        />
+
+        <circle
+          class="node-dot"
+          cx="935"
+          cy="438"
+          r="3"
+        />
+
+        <text
+          class="node-label"
+          x="935"
+          y="478"
+          text-anchor="middle"
+        >
+          STRATEGY
+        </text>
+
+        <text
+          class="node-sub"
+          x="935"
+          y="494"
+          text-anchor="middle"
+        >
+          CONVERGENCE
+        </text>
+
+      </g>
+
+
+      <!-- =================================================
+           MOVING SIGNAL
+      ================================================== -->
+
+      <circle
+        id="signalGlow"
+        class="signalGlow"
+        cx="105"
+        cy="185"
+        r="12"
+      />
+
+      <circle
+        id="signalCore"
+        class="signalCore"
+        cx="105"
+        cy="185"
+        r="3.5"
+      />
+
+    </svg>
+
+  </div>
+
+
+  <!-- =====================================================
+       HUD
+  ====================================================== -->
+
+  <div id="hud">
+
+    <div class="top">
+
+      <div>
+
+        <div class="eyebrow">
+          CAREER BUILD SYSTEM / LIVE TRACE
+        </div>
+
+        <div class="title">
+          MAN <span>/</span>
+          MYTH <span>/</span>
+          LEGEND
+        </div>
+
+      </div>
+
+
+      <div class="status">
+
+        TRACE
+        <b id="traceState">RUNNING</b>
+
+        <br>
+
+        MODE
+        <b>CONVERGENCE</b>
+
+        <br>
+
+        OUTPUT
+        <b>PROOF OF WORK</b>
+
+      </div>
+
+    </div>
+
+
+    <!-- phase -->
+
+    <div id="phase">
+
+      <div class="phase-name">
+        CURRENT VECTOR
+      </div>
+
+      <div
+        class="phase-big"
+        id="phaseBig"
+      >
+        UNCERTAINTY
+      </div>
+
+      <div
+        class="phase-copy"
+        id="phaseCopy"
+      >
+        Many possible directions.
+        The build has not converged yet.
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TERMINAL
+    ================================================== -->
+
+    <div id="terminal">
+
+      <div class="term-head">
+
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+
+        <span class="term-title">
+          BUILD JOURNAL /
+          PROBLEM → ATTACK → RESPONSE → SOLUTION
+        </span>
+
+      </div>
+
+
+      <div id="log"></div>
+
+    </div>
+
+
+    <!-- controls -->
+
+    <div id="controls">
+
+      <button id="pauseBtn">
+        PAUSE
+      </button>
+
+      <button id="replayBtn">
+        REPLAY
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   JOURNAL DATA
+========================================================= */
+
+const entries = [
+
+  [
+    "USER",
+    "I want to rethink the CV. Not another static resume."
+  ],
+
+  [
+    "AI",
+    "Turn the CV into an experience: visible credentials, the story behind them, and the leverage they create."
+  ],
+
+  [
+    "USER",
+    "Let's view it."
+  ],
+
+  [
+    "BUILD",
+    "Interactive notebook / shuffle / first-person entry point."
+  ],
+
+  [
+    "USER",
+    "Starts with a video of shuffling through a notebook."
+  ],
+
+  [
+    "BUILD",
+    "BOOKMAKER'S OFFICE / CAREER COUPON / RUNNER NO. 021283."
+  ],
+
+  [
+    "USER",
+    "The myth part feels ambiguous. It needs to cross with the actual experience."
+  ],
+
+  [
+    "PIVOT",
+    "The metaphor cannot replace the evidence."
+  ],
+
+  [
+    "CRYSTALLIZE",
+    "MAN = bare metal. MYTH = operating system. LEGEND = leverage."
+  ],
+
+  [
+    "USER",
+    "I also want proof of work. HCCH Judgment Convention adoption, 2019."
+  ],
+
+  [
+    "BUILD",
+    "Evidence becomes visible: snapshots, cases, artifacts, decisions."
+  ],
+
+  [
+    "USER",
+    "UNO flip card between MAN / MYTH / LEGEND."
+  ],
+
+  [
+    "AI",
+    "Use the card as an objection mechanic."
+  ],
+
+  [
+    "USER",
+    "Yes. It should address the question before they ask it and steer the narrative."
+  ],
+
+  [
+    "BUILD",
+    "UNO becomes a narrative switch: objection → answer → next layer."
+  ],
+
+  [
+    "USER",
+    "Cone directed in one direction. Build a moat. Circular expanding vector. Goalposts and milestones."
+  ],
+
+  [
+    "CRYSTALLIZE",
+    "Cone of uncertainty → cone of converging skills → strategic leverage."
+  ],
+
+  [
+    "USER",
+    "Proof of work. Proof of flexibility. Proof of adaptability. Proof of stacking skills."
+  ],
+
+  [
+    "BUILD",
+    "Career Sniper prototype."
+  ],
+
+  [
+    "FAIL",
+    "Too much game UI. The metaphor makes the candidate look like a score."
+  ],
+
+  [
+    "RETURN",
+    "Strip away the score. Keep the underlying mechanism."
+  ],
+
+  [
+    "CRYSTALLIZE",
+    "You don't shoot skills. You eliminate assumptions."
+  ],
+
+  [
+    "BUILD",
+    "CAREER CONVERGENCE ENGINE."
+  ],
+
+  [
+    "AI",
+    "LAW → CULTURE → GAMES → TECHNOLOGY → STRATEGY."
+  ],
+
+  [
+    "USER",
+    "The end should wrap me up as the generalist ready for the future."
+  ],
+
+  [
+    "CRYSTALLIZE",
+    "The result isn't a collection of skills. It's the ability to connect things other people see separately."
+  ],
+
+  [
+    "BUILD",
+    "Background visualisation: cone of uncertainty with skill nodes and a moving trajectory."
+  ],
+
+  [
+    "USER",
+    "Run it inside the cone, forward along the inner surface."
+  ],
+
+  [
+    "BUILD",
+    "Surface-bound signal: experimentation → stacking → convergence."
+  ],
+
+  [
+    "FAIL",
+    "GitHub upload / launch friction. First card works. Then nothing runs."
+  ],
+
+  [
+    "RETURN",
+    "Inspect. Rebuild. Upload. Run. Next problem."
+  ],
+
+  [
+    "CRYSTALLIZE",
+    "The CV is the solution. The build log proves the problem-solving."
+  ],
+
+  [
+    "SHIP",
+    "MAN / MYTH / LEGEND → PROOF OF WORK → GENERALIST / STRATEGIC OPERATOR."
+  ]
+
+];
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const log =
+  document.getElementById("log");
+
+const pauseBtn =
+  document.getElementById("pauseBtn");
+
+const replayBtn =
+  document.getElementById("replayBtn");
+
+const traceState =
+  document.getElementById("traceState");
+
+const phaseBig =
+  document.getElementById("phaseBig");
+
+const phaseCopy =
+  document.getElementById("phaseCopy");
+
+const surfacePath =
+  document.getElementById("surfacePath");
+
+const surfaceHot =
+  document.getElementById("surfaceHot");
+
+const signalCore =
+  document.getElementById("signalCore");
+
+const signalGlow =
+  document.getElementById("signalGlow");
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let playing = true;
+
+let generation = 0;
+
+let progress = 0;
+
+let lastFrame =
+  performance.now();
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function sleep(ms){
+
+  return new Promise(
+    resolve => setTimeout(resolve,ms)
+  );
+
+}
+
+
+function classFor(type){
+
+  const classes = {
+
+    USER:"user",
+    AI:"ai",
+    PIVOT:"pivot",
+    BUILD:"build",
+    FAIL:"fail",
+    RETURN:"return",
+    CRYSTALLIZE:"crys",
+    SHIP:"ship"
+
+  };
+
+  return classes[type] || "dim";
+
+}
+
+
+async function waitWhilePaused(){
+
+  while(!playing){
+
+    await sleep(100);
+
+  }
+
+}
+
+
+/* =========================================================
+   TYPEWRITER
+========================================================= */
+
+async function typeText(text,target){
+
+  for(
+    let i=0;
+    i<text.length;
+    i++
+  ){
+
+    await waitWhilePaused();
+
+    target.textContent += text[i];
+
+    log.scrollTop =
+      log.scrollHeight;
+
+    await sleep(7);
+
+  }
+
+}
+
+
+/* =========================================================
+   JOURNAL ENGINE
+========================================================= */
+
+async function runJournal(myGeneration){
+
+  log.innerHTML = "";
+
+  for(
+    const [type,text]
+    of entries
+  ){
+
+    if(
+      myGeneration !== generation
+    ){
+      return;
+    }
+
+    await waitWhilePaused();
+
+
+    const line =
+      document.createElement("div");
+
+    line.className =
+      "line " + classFor(type);
+
+
+    const prefix =
+      document.createTextNode(
+        type + "  "
+      );
+
+    line.appendChild(prefix);
+
+
+    const body =
+      document.createElement("span");
+
+    line.appendChild(body);
+
+    log.appendChild(line);
+
+
+    await typeText(
+      text,
+      body
+    );
+
+
+    /*
+      Longer pause after structural
+      moments.
+    */
+
+    if(
+      type === "BUILD" ||
+      type === "FAIL" ||
+      type === "CRYSTALLIZE"
+    ){
+
+      await sleep(520);
+
+    }else{
+
+      await sleep(270);
+
+    }
+
+  }
+
+
+  if(
+    myGeneration === generation
+  ){
+
+    const line =
+      document.createElement("div");
+
+    line.className =
+      "line ship";
+
+
+    line.innerHTML = `
+
+$ git status
+
+<span class="dim">
+  nothing to commit.
+  working tree clean.
+</span>
+
+$ ./resume
+
+<span class="dim">
+  &gt; ready
+</span>
+
+SHIPPED.<span class="cursor"></span>
+
+    `;
+
+    log.appendChild(line);
+
+    log.scrollTop =
+      log.scrollHeight;
+
+  }
+
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+pauseBtn.addEventListener(
+  "click",
+  () => {
+
+    playing =
+      !playing;
+
+    pauseBtn.textContent =
+      playing
+        ? "PAUSE"
+        : "RESUME";
+
+    traceState.textContent =
+      playing
+        ? "RUNNING"
+        : "PAUSED";
+
+  }
+);
+
+
+replayBtn.addEventListener(
+  "click",
+  () => {
+
+    generation++;
+
+    playing = true;
+
+    progress = 0;
+
+    pauseBtn.textContent =
+      "PAUSE";
+
+    traceState.textContent =
+      "RUNNING";
+
+    runJournal(
+      generation
+    );
+
+  }
+);
+
+
+/* =========================================================
+   SPACE = PAUSE / RESUME
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.code === "Space"
+    ){
+
+      event.preventDefault();
+
+      pauseBtn.click();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   START JOURNAL
+========================================================= */
+
+runJournal(
+  generation
+);
+
+
+/* =========================================================
+   MOVING SIGNAL
+
+   The important part:
+
+   The signal does NOT travel along a
+   flat timeline.
+
+   It follows an SVG path positioned
+   inside the apparent inner surface
+   of the cone.
+
+   As the cone narrows, the path
+   converges toward the apex.
+========================================================= */
+
+const pathLength =
+  surfacePath.getTotalLength();
+
+
+function animate(now){
+
+  const delta =
+    Math.min(
+      40,
+      now - lastFrame
+    );
+
+  lastFrame = now;
+
+
+  if(playing){
+
+    /*
+      Movement speed.
+
+      Small enough to feel like a
+      continuous system rather than
+      a screensaver.
+    */
+
+    progress +=
+      delta * 0.000027;
+
+
+    /*
+      Loop the visual field.
+
+      The journal itself only ships once.
+      The background remains alive.
+    */
+
+    if(progress > 1){
+
+      progress = 0;
+
+    }
+
+
+    const distance =
+      progress * pathLength;
+
+
+    const point =
+      surfacePath.getPointAtLength(
+        distance
+      );
+
+
+    signalCore.setAttribute(
+      "cx",
+      point.x
+    );
+
+    signalCore.setAttribute(
+      "cy",
+      point.y
+    );
+
+
+    signalGlow.setAttribute(
+      "cx",
+      point.x
+    );
+
+    signalGlow.setAttribute(
+      "cy",
+      point.y
+    );
+
+
+    /*
+      Draw the accumulated signal
+      behind the moving point.
+    */
+
+    surfaceHot.setAttribute(
+      "stroke-dasharray",
+      `${Math.max(1,distance)} ${pathLength}`
+    );
+
+  }
+
+
+  /* =====================================================
+     PHASE LABEL
+  ===================================================== */
+
+  if(progress < .24){
+
+    phaseBig.textContent =
+      "UNCERTAINTY";
+
+    phaseCopy.textContent =
+      "Many possible directions. " +
+      "The build has not converged yet.";
+
+  }
+
+  else if(progress < .50){
+
+    phaseBig.textContent =
+      "EXPLORATION";
+
+    phaseCopy.textContent =
+      "Law, culture, games and technology " +
+      "become evidence rather than labels.";
+
+  }
+
+  else if(progress < .78){
+
+    phaseBig.textContent =
+      "CONVERGENCE";
+
+    phaseCopy.textContent =
+      "The apparent contradictions " +
+      "start becoming a system.";
+
+  }
+
+  else{
+
+    phaseBig.textContent =
+      "STRATEGIC LEVERAGE";
+
+    phaseCopy.textContent =
+      "The cone narrows. Skills stop competing " +
+      "and start compounding.";
+
+  }
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =========================================================
+   GO
+========================================================= */
+
+requestAnimationFrame(
+  animate
+);
+
+</script>
+
+</body>
+</html>
