@@ -1,0 +1,2431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Career Convergence Engine — Štefan Majerník</title>
+
+<style>
+:root{
+  --bg:#07090c;
+  --panel:#0d1117;
+  --panel2:#111820;
+  --line:rgba(255,255,255,.12);
+  --text:#f2f4f7;
+  --muted:#8993a0;
+  --cyan:#5de4ff;
+  --cyan2:#1ba8c9;
+  --orange:#ff9d4d;
+  --green:#72e6a2;
+  --red:#ff647c;
+  --purple:#a98cff;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  cursor:default;
+}
+
+button{
+  font:inherit;
+}
+
+#app{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(28,93,115,.12),transparent 34%),
+    radial-gradient(circle at 20% 80%,rgba(169,140,255,.05),transparent 30%),
+    #07090c;
+}
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+#stars{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.scanlines{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.12;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(255,255,255,.025) 4px
+  );
+}
+
+.vignette{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(0,0,0,.55) 100%
+  );
+}
+
+/* =========================================================
+   TOP HUD
+========================================================= */
+
+.hud{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:20;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(5,7,10,.72);
+  backdrop-filter:blur(12px);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand-mark{
+  width:30px;
+  height:30px;
+  border:1px solid var(--cyan);
+  border-radius:50%;
+  position:relative;
+  box-shadow:0 0 18px rgba(93,228,255,.18);
+}
+
+.brand-mark:before,
+.brand-mark:after{
+  content:"";
+  position:absolute;
+  background:var(--cyan);
+}
+
+.brand-mark:before{
+  width:1px;
+  height:42px;
+  left:14px;
+  top:-7px;
+}
+
+.brand-mark:after{
+  height:1px;
+  width:42px;
+  left:-7px;
+  top:14px;
+}
+
+.brand-text{
+  font-size:11px;
+  letter-spacing:3px;
+  color:#dce4eb;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--muted);
+}
+
+.status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+}
+
+/* =========================================================
+   SCREENS
+========================================================= */
+
+.screen{
+  position:absolute;
+  inset:72px 0 0;
+  display:none;
+  z-index:5;
+}
+
+.screen.active{
+  display:block;
+}
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+#intro{
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:30px;
+}
+
+#intro.active{
+  display:flex;
+}
+
+.intro-inner{
+  max-width:850px;
+  animation:fadeUp .9s ease both;
+}
+
+.eyebrow{
+  font-size:10px;
+  letter-spacing:5px;
+  color:var(--cyan);
+  margin-bottom:24px;
+  text-transform:uppercase;
+}
+
+.intro-title{
+  font-size:clamp(38px,7vw,92px);
+  line-height:.9;
+  letter-spacing:-5px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.intro-title span{
+  display:block;
+}
+
+.intro-title .dim{
+  color:#4c5661;
+}
+
+.intro-sub{
+  margin:32px auto 0;
+  max-width:610px;
+  font-size:15px;
+  line-height:1.7;
+  color:#aeb8c3;
+}
+
+.intro-sub strong{
+  color:white;
+}
+
+.start-btn{
+  margin-top:42px;
+  padding:16px 28px;
+  border:1px solid var(--cyan);
+  background:rgba(93,228,255,.04);
+  color:var(--cyan);
+  letter-spacing:3px;
+  font-size:10px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.start-btn:hover{
+  background:var(--cyan);
+  color:#061016;
+  box-shadow:0 0 30px rgba(93,228,255,.25);
+}
+
+.micro{
+  margin-top:20px;
+  color:#4f5964;
+  font-size:9px;
+  letter-spacing:2px;
+}
+
+/* =========================================================
+   OBJECTION ROOM
+========================================================= */
+
+#objections{
+  padding:30px;
+}
+
+#objections.active{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.objection-layout{
+  width:min(1050px,100%);
+  display:grid;
+  grid-template-columns:1fr 1.25fr;
+  gap:35px;
+  align-items:center;
+}
+
+.chapter-label{
+  color:var(--cyan);
+  font-size:9px;
+  letter-spacing:4px;
+  margin-bottom:20px;
+}
+
+.big-question{
+  font-size:clamp(34px,5vw,68px);
+  line-height:.95;
+  letter-spacing:-3px;
+  font-weight:800;
+}
+
+.big-question .strike{
+  color:#555f69;
+  text-decoration:line-through;
+  text-decoration-color:var(--red);
+}
+
+.question-detail{
+  margin-top:24px;
+  color:#8d98a4;
+  font-size:13px;
+  line-height:1.7;
+  max-width:460px;
+}
+
+.objection-stack{
+  position:relative;
+  min-height:430px;
+}
+
+.objection-card{
+  position:absolute;
+  width:min(440px,90%);
+  padding:25px;
+  border:1px solid var(--line);
+  background:rgba(12,16,21,.94);
+  box-shadow:0 20px 70px rgba(0,0,0,.4);
+  transition:.5s;
+}
+
+.objection-card:nth-child(1){
+  right:0;
+  top:15px;
+  transform:rotate(3deg);
+}
+
+.objection-card:nth-child(2){
+  right:35px;
+  top:110px;
+  transform:rotate(-3deg);
+}
+
+.objection-card:nth-child(3){
+  right:0;
+  top:215px;
+  transform:rotate(2deg);
+}
+
+.objection-card.active{
+  border-color:var(--orange);
+  box-shadow:0 0 40px rgba(255,157,77,.08);
+}
+
+.card-meta{
+  display:flex;
+  justify-content:space-between;
+  color:#626d78;
+  font-size:8px;
+  letter-spacing:2px;
+  margin-bottom:22px;
+}
+
+.card-title{
+  font-size:22px;
+  line-height:1.1;
+  margin-bottom:12px;
+}
+
+.card-body{
+  color:#8994a0;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.flip-hint{
+  position:absolute;
+  bottom:0;
+  right:0;
+  font-size:9px;
+  letter-spacing:2px;
+  color:#59636d;
+}
+
+/* =========================================================
+   CONVERGENCE ENGINE
+========================================================= */
+
+#engine{
+  padding:20px;
+}
+
+#engine.active{
+  display:block;
+}
+
+.engine-header{
+  position:absolute;
+  left:30px;
+  top:24px;
+  z-index:10;
+}
+
+.engine-title{
+  font-size:12px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+
+.engine-state{
+  margin-top:8px;
+  font-size:9px;
+  color:var(--cyan);
+  letter-spacing:2px;
+}
+
+#field{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+}
+
+#fieldCanvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+.center-core{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:150px;
+  height:150px;
+  margin-left:-75px;
+  margin-top:-75px;
+  border:1px solid rgba(93,228,255,.3);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  pointer-events:none;
+  transition:1s;
+}
+
+.center-core:before{
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px dashed rgba(93,228,255,.25);
+  border-radius:50%;
+  animation:spin 18s linear infinite;
+}
+
+.core-text{
+  position:relative;
+  z-index:2;
+  font-size:9px;
+  letter-spacing:2px;
+  color:#a7b3bf;
+  line-height:1.6;
+}
+
+.core-text strong{
+  display:block;
+  color:white;
+  font-size:13px;
+  margin-top:4px;
+}
+
+.skill-node{
+  position:absolute;
+  width:150px;
+  min-height:72px;
+  padding:13px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(9,13,18,.94);
+  cursor:pointer;
+  transform:translate(-50%,-50%);
+  transition:
+    left 1s cubic-bezier(.2,.8,.2,1),
+    top 1s cubic-bezier(.2,.8,.2,1),
+    border-color .25s,
+    box-shadow .25s,
+    opacity .5s,
+    transform .25s;
+  z-index:6;
+}
+
+.skill-node:hover{
+  border-color:var(--cyan);
+  box-shadow:0 0 25px rgba(93,228,255,.1);
+  transform:translate(-50%,-50%) scale(1.04);
+}
+
+.skill-node.connected{
+  border-color:rgba(114,230,162,.7);
+}
+
+.skill-node.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+
+.node-number{
+  font-size:8px;
+  color:var(--cyan);
+  letter-spacing:2px;
+}
+
+.node-name{
+  margin-top:7px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.node-role{
+  margin-top:5px;
+  color:#68737e;
+  font-size:9px;
+}
+
+#nodeDetail{
+  position:absolute;
+  left:30px;
+  bottom:30px;
+  width:300px;
+  padding:20px;
+  border:1px solid var(--line);
+  background:rgba(8,11,15,.9);
+  backdrop-filter:blur(12px);
+  z-index:15;
+  opacity:0;
+  transform:translateY(15px);
+  transition:.3s;
+  pointer-events:none;
+}
+
+#nodeDetail.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.detail-label{
+  color:var(--cyan);
+  font-size:8px;
+  letter-spacing:3px;
+}
+
+.detail-title{
+  margin-top:10px;
+  font-size:20px;
+}
+
+.detail-copy{
+  margin-top:10px;
+  color:#8c97a2;
+  font-size:11px;
+  line-height:1.65;
+}
+
+.detail-proof{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+  color:#cbd2d9;
+  font-size:10px;
+  line-height:1.5;
+}
+
+#engineControls{
+  position:absolute;
+  right:30px;
+  bottom:30px;
+  z-index:20;
+  display:flex;
+  gap:8px;
+}
+
+.small-btn{
+  padding:11px 14px;
+  border:1px solid var(--line);
+  background:rgba(10,14,19,.8);
+  color:#9ca6b0;
+  font-size:8px;
+  letter-spacing:2px;
+  cursor:pointer;
+}
+
+.small-btn:hover{
+  border-color:var(--cyan);
+  color:var(--cyan);
+}
+
+/* =========================================================
+   CONE
+========================================================= */
+
+#cone{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  opacity:0;
+  transition:1s;
+}
+
+#cone.visible{
+  opacity:1;
+}
+
+.cone-shape{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:0;
+  height:0;
+  border-top:260px solid transparent;
+  border-bottom:260px solid transparent;
+  border-left:520px solid rgba(93,228,255,.035);
+  transform-origin:0 50%;
+  transform:rotate(0deg);
+}
+
+.cone-line{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:55vw;
+  height:1px;
+  background:linear-gradient(90deg,var(--cyan),transparent);
+  transform-origin:left;
+}
+
+.goalpost{
+  position:absolute;
+  width:1px;
+  height:120px;
+  background:rgba(255,255,255,.18);
+}
+
+.goalpost span{
+  position:absolute;
+  top:-20px;
+  left:5px;
+  white-space:nowrap;
+  font-size:8px;
+  color:#64707b;
+  letter-spacing:2px;
+}
+
+/* =========================================================
+   CONVERGENCE
+========================================================= */
+
+#convergence{
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:30px;
+}
+
+#convergence.active{
+  display:flex;
+}
+
+.convergence-inner{
+  width:min(900px,100%);
+}
+
+.signal{
+  font-size:9px;
+  letter-spacing:5px;
+  color:var(--cyan);
+  margin-bottom:25px;
+}
+
+.convergence-title{
+  font-size:clamp(48px,9vw,120px);
+  font-weight:900;
+  line-height:.82;
+  letter-spacing:-7px;
+}
+
+.convergence-title span{
+  display:block;
+}
+
+.convergence-title .accent{
+  color:var(--cyan);
+}
+
+.convergence-copy{
+  max-width:650px;
+  margin:38px auto 0;
+  color:#a4aeb9;
+  font-size:15px;
+  line-height:1.75;
+}
+
+.convergence-copy strong{
+  color:white;
+}
+
+.vector{
+  position:relative;
+  height:90px;
+  margin:35px auto;
+  max-width:700px;
+  overflow:hidden;
+}
+
+.vector-line{
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    var(--cyan),
+    white
+  );
+  animation:vectorGrow 2s ease both;
+}
+
+.vector-arrow{
+  position:absolute;
+  right:0;
+  top:calc(50% - 5px);
+  width:10px;
+  height:10px;
+  border-top:1px solid white;
+  border-right:1px solid white;
+  transform:rotate(45deg);
+}
+
+.milestones{
+  display:flex;
+  justify-content:space-between;
+  color:#59636e;
+  font-size:8px;
+  letter-spacing:2px;
+}
+
+.milestones span:last-child{
+  color:var(--cyan);
+}
+
+/* =========================================================
+   PROOF
+========================================================= */
+
+#proof{
+  padding:30px;
+  overflow:auto;
+}
+
+#proof.active{
+  display:block;
+}
+
+.proof-wrap{
+  width:min(1100px,100%);
+  margin:0 auto;
+  padding:30px 0 80px;
+}
+
+.proof-heading{
+  max-width:750px;
+}
+
+.proof-heading h2{
+  font-size:clamp(38px,6vw,72px);
+  letter-spacing:-4px;
+  line-height:.9;
+}
+
+.proof-heading p{
+  margin-top:20px;
+  color:#89939e;
+  font-size:13px;
+  line-height:1.7;
+}
+
+.proof-grid{
+  margin-top:45px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.proof-card{
+  min-height:210px;
+  padding:22px;
+  border:1px solid var(--line);
+  background:rgba(11,15,20,.8);
+  transition:.3s;
+}
+
+.proof-card:hover{
+  border-color:rgba(93,228,255,.5);
+  transform:translateY(-3px);
+}
+
+.proof-year{
+  color:var(--cyan);
+  font-size:9px;
+  letter-spacing:2px;
+}
+
+.proof-card h3{
+  margin-top:22px;
+  font-size:19px;
+}
+
+.proof-card p{
+  margin-top:12px;
+  color:#77828e;
+  font-size:11px;
+  line-height:1.65;
+}
+
+.proof-tag{
+  display:inline-block;
+  margin-top:17px;
+  padding:5px 7px;
+  border:1px solid rgba(255,255,255,.1);
+  color:#69737d;
+  font-size:7px;
+  letter-spacing:2px;
+}
+
+/* =========================================================
+   FINAL / MAN MYTH LEGEND
+========================================================= */
+
+#final{
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:30px;
+}
+
+#final.active{
+  display:flex;
+}
+
+.final-inner{
+  width:min(950px,100%);
+}
+
+.final-eyebrow{
+  font-size:9px;
+  letter-spacing:5px;
+  color:var(--cyan);
+  margin-bottom:25px;
+}
+
+.final-title{
+  font-size:clamp(42px,8vw,110px);
+  line-height:.82;
+  letter-spacing:-6px;
+  font-weight:900;
+}
+
+.final-title .thin{
+  color:#68727d;
+}
+
+.final-copy{
+  max-width:690px;
+  margin:35px auto 0;
+  color:#a6b0bb;
+  font-size:15px;
+  line-height:1.75;
+}
+
+.final-copy strong{
+  color:white;
+}
+
+.triad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  max-width:750px;
+  margin:45px auto 0;
+}
+
+.triad-card{
+  padding:20px;
+  border:1px solid var(--line);
+  background:rgba(12,16,21,.75);
+}
+
+.triad-card .label{
+  color:#59646e;
+  font-size:8px;
+  letter-spacing:3px;
+}
+
+.triad-card h3{
+  margin-top:9px;
+  font-size:18px;
+}
+
+.triad-card p{
+  margin-top:8px;
+  color:#77828e;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.final-actions{
+  margin-top:38px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* =========================================================
+   FOOTER / NAV
+========================================================= */
+
+.nav{
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:50;
+  display:flex;
+  gap:5px;
+}
+
+.nav-dot{
+  width:25px;
+  height:2px;
+  background:#303842;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.nav-dot.active{
+  width:45px;
+  background:var(--cyan);
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+@keyframes vectorGrow{
+  from{transform:scaleX(0);transform-origin:left}
+  to{transform:scaleX(1);transform-origin:left}
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 10px rgba(93,228,255,.1)}
+  50%{box-shadow:0 0 35px rgba(93,228,255,.25)}
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:800px){
+
+  .hud{
+    height:58px;
+    padding:0 15px;
+  }
+
+  .screen{
+    inset:58px 0 0;
+  }
+
+  .status span:not(.status-dot){
+    display:none;
+  }
+
+  .brand-text{
+    font-size:8px;
+    letter-spacing:2px;
+  }
+
+  .intro-title{
+    letter-spacing:-3px;
+  }
+
+  .intro-sub{
+    font-size:13px;
+  }
+
+  .objection-layout{
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+
+  .objection-stack{
+    min-height:300px;
+  }
+
+  .objection-card{
+    width:92%;
+  }
+
+  .objection-card:nth-child(1){
+    top:0;
+  }
+
+  .objection-card:nth-child(2){
+    top:75px;
+  }
+
+  .objection-card:nth-child(3){
+    top:150px;
+  }
+
+  .big-question{
+    font-size:38px;
+  }
+
+  #engine{
+    padding:10px;
+  }
+
+  .engine-header{
+    left:15px;
+    top:15px;
+  }
+
+  .center-core{
+    width:110px;
+    height:110px;
+    margin-left:-55px;
+    margin-top:-55px;
+  }
+
+  .skill-node{
+    width:120px;
+    min-height:62px;
+    padding:10px;
+  }
+
+  .node-name{
+    font-size:11px;
+  }
+
+  .node-role{
+    font-size:8px;
+  }
+
+  #nodeDetail{
+    left:15px;
+    bottom:60px;
+    width:calc(100% - 30px);
+  }
+
+  #engineControls{
+    right:15px;
+    bottom:15px;
+  }
+
+  .proof-grid{
+    grid-template-columns:1fr;
+  }
+
+  .proof-wrap{
+    padding:10px 0 80px;
+  }
+
+  .triad{
+    grid-template-columns:1fr;
+  }
+
+  .final-title{
+    letter-spacing:-4px;
+  }
+
+  .convergence-title{
+    letter-spacing:-4px;
+  }
+
+  .nav{
+    bottom:10px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <canvas id="stars"></canvas>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <!-- =====================================================
+       HUD
+  ====================================================== -->
+
+  <header class="hud">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">MAJERNÍK / CAREER CONVERGENCE ENGINE</div>
+    </div>
+
+    <div class="status">
+      <span class="status-dot"></span>
+      <span id="systemStatus">SYSTEM READY</span>
+    </div>
+  </header>
+
+  <!-- =====================================================
+       INTRO
+  ====================================================== -->
+
+  <section id="intro" class="screen active">
+
+    <div class="intro-inner">
+
+      <div class="eyebrow">
+        Candidate analysis / 2026
+      </div>
+
+      <h1 class="intro-title">
+        <span>Career</span>
+        <span class="dim">Convergence</span>
+        <span>Engine</span>
+      </h1>
+
+      <p class="intro-sub">
+        A conventional CV asks whether your experience
+        <strong>matches the job.</strong>
+        This one asks what happens when apparently unrelated
+        experience starts connecting.
+      </p>
+
+      <button class="start-btn" onclick="beginExperience()">
+        ENTER THE SYSTEM
+      </button>
+
+      <div class="micro">
+        NO ALGORITHM WILL SCORE YOU
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       OBJECTION ROOM
+  ====================================================== -->
+
+  <section id="objections" class="screen">
+
+    <div class="objection-layout">
+
+      <div>
+
+        <div class="chapter-label">
+          01 / THE OBJECTION
+        </div>
+
+        <h2 class="big-question">
+          <span class="strike">LAWYER?</span><br>
+          CREATIVE?<br>
+          STRATEGIST?
+        </h2>
+
+        <p class="question-detail">
+          The first problem isn't a lack of skills.
+          It's that a conventional CV forces different
+          chapters of a career into separate boxes.
+        </p>
+
+      </div>
+
+      <div class="objection-stack">
+
+        <div class="objection-card active">
+          <div class="card-meta">
+            <span>OBJECTION 01</span>
+            <span>01 / 03</span>
+          </div>
+
+          <div class="card-title">
+            “Why is a lawyer applying for this?”
+          </div>
+
+          <div class="card-body">
+            Fair question. Until you look at what legal
+            training actually built: precision, negotiation,
+            structured argument and the ability to operate
+            when the variables are moving.
+          </div>
+        </div>
+
+        <div class="objection-card">
+          <div class="card-meta">
+            <span>OBJECTION 02</span>
+            <span>02 / 03</span>
+          </div>
+
+          <div class="card-title">
+            “So he's a creative?”
+          </div>
+
+          <div class="card-body">
+            Then came culture, visual arts, games, narrative,
+            educational design and the practice of turning
+            complex ideas into things people can actually use.
+          </div>
+        </div>
+
+        <div class="objection-card">
+          <div class="card-meta">
+            <span>OBJECTION 03</span>
+            <span>03 / 03</span>
+          </div>
+
+          <div class="card-title">
+            “And now he's technical?”
+          </div>
+
+          <div class="card-body">
+            HTML. CSS. JavaScript. Three.js.
+            Not because the goal was to become a developer,
+            but because understanding the medium changes
+            what can be built.
+          </div>
+        </div>
+
+        <div class="flip-hint">
+          TAP / CLICK TO CONTINUE
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       ENGINE
+  ====================================================== -->
+
+  <section id="engine" class="screen">
+
+    <div class="engine-header">
+
+      <div class="engine-title">
+        CAREER CONVERGENCE ENGINE
+      </div>
+
+      <div class="engine-state" id="engineState">
+        SYSTEMS DISCONNECTED
+      </div>
+
+    </div>
+
+    <div id="field">
+
+      <canvas id="fieldCanvas"></canvas>
+
+      <div id="cone">
+        <div class="cone-shape"></div>
+        <div class="cone-line"></div>
+
+        <div class="goalpost" style="left:62%;top:34%;">
+          <span>LAW</span>
+        </div>
+
+        <div class="goalpost" style="left:70%;top:44%;">
+          <span>CULTURE</span>
+        </div>
+
+        <div class="goalpost" style="left:78%;top:53%;">
+          <span>GAMES</span>
+        </div>
+
+        <div class="goalpost" style="left:87%;top:62%;">
+          <span>TECH</span>
+        </div>
+      </div>
+
+      <div class="center-core">
+        <div class="core-text">
+          CONVERGENCE
+          <strong>OPERATOR</strong>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="nodeDetail">
+
+      <div class="detail-label">SYSTEM CONTRIBUTION</div>
+
+      <div class="detail-title" id="detailTitle">
+        Select a node
+      </div>
+
+      <div class="detail-copy" id="detailCopy">
+        Every chapter contributes something different.
+      </div>
+
+      <div class="detail-proof" id="detailProof">
+        Click another node to inspect the evidence.
+      </div>
+
+    </div>
+
+    <div id="engineControls">
+
+      <button class="small-btn" onclick="resetEngine()">
+        RESET
+      </button>
+
+      <button class="small-btn" onclick="convergeEngine()">
+        CONVERGE →
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       CONVERGENCE
+  ====================================================== -->
+
+  <section id="convergence" class="screen">
+
+    <div class="convergence-inner">
+
+      <div class="signal">
+        SIGNAL DETECTED
+      </div>
+
+      <h2 class="convergence-title">
+        <span>THE</span>
+        <span class="accent">SIGNAL</span>
+        <span>CONVERGES.</span>
+      </h2>
+
+      <p class="convergence-copy">
+        Law taught <strong>precision.</strong>
+        Culture taught <strong>context.</strong>
+        Games taught <strong>systems.</strong>
+        Technology taught <strong>leverage.</strong>
+        <br><br>
+        The result isn't a collection of skills.
+        It's the ability to connect things
+        other people see separately.
+      </p>
+
+      <div class="vector">
+        <div class="vector-line"></div>
+        <div class="vector-arrow"></div>
+      </div>
+
+      <div class="milestones">
+        <span>UNCERTAINTY</span>
+        <span>EXPERIMENT</span>
+        <span>STACK</span>
+        <span>CONVERGENCE</span>
+        <span>LEVERAGE</span>
+      </div>
+
+      <button
+        class="start-btn"
+        onclick="showProof()"
+      >
+        SHOW THE EVIDENCE →
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       PROOF OF WORK
+  ====================================================== -->
+
+  <section id="proof" class="screen">
+
+    <div class="proof-wrap">
+
+      <div class="chapter-label">
+        04 / PROOF OF WORK
+      </div>
+
+      <div class="proof-heading">
+
+        <h2>
+          Don't take the<br>
+          narrative on faith.
+        </h2>
+
+        <p>
+          The point of the convergence isn't to make the
+          career sound coherent after the fact.
+          It's to show that the apparently strange moves
+          produced useful capabilities.
+        </p>
+
+      </div>
+
+      <div class="proof-grid">
+
+        <article class="proof-card">
+
+          <div class="proof-year">
+            2019 / THE HAGUE
+          </div>
+
+          <h3>
+            HCCH Judgments Convention
+          </h3>
+
+          <p>
+            Represented and negotiated for the Slovak Republic
+            and EU Member States during the 22nd Diplomatic
+            Session at the Peace Palace.
+          </p>
+
+          <span class="proof-tag">
+            PRECISION / NEGOTIATION
+          </span>
+
+        </article>
+
+        <article class="proof-card">
+
+          <div class="proof-year">
+            2010—2015
+          </div>
+
+          <h3>
+            Legal Precision
+          </h3>
+
+          <p>
+            Years inside the machinery of law and public
+            administration. Learning how language, incentives,
+            constraints and institutions actually behave.
+          </p>
+
+          <span class="proof-tag">
+            SYSTEMS / ARGUMENT
+          </span>
+
+        </article>
+
+        <article class="proof-card">
+
+          <div class="proof-year">
+            2022—2024
+          </div>
+
+          <h3>
+            Culture & Visual Arts
+          </h3>
+
+          <p>
+            Academy of Fine Arts, cultural policy and
+            stakeholder environments. Moving from rules
+            toward meaning, perception and people.
+          </p>
+
+          <span class="proof-tag">
+            CONTEXT / CULTURE
+          </span>
+
+        </article>
+
+        <article class="proof-card">
+
+          <div class="proof-year">
+            2023—2024
+          </div>
+
+          <h3>
+            Game Theory
+          </h3>
+
+          <p>
+            Stanford Game Theory alongside practical work:
+            incentives, strategic behaviour and decision-making
+            under competing interests.
+          </p>
+
+          <span class="proof-tag">
+            STRATEGY / INCENTIVES
+          </span>
+
+        </article>
+
+        <article class="proof-card">
+
+          <div class="proof-year">
+            2024—2025
+          </div>
+
+          <h3>
+            Games & Learning
+          </h3>
+
+          <p>
+            Game development and educational design:
+            transforming abstract systems into experiences
+            people can navigate, understand and remember.
+          </p>
+
+          <span class="proof-tag">
+            SYSTEMS / EXPERIENCE
+          </span>
+
+        </article>
+
+        <article class="proof-card">
+
+          <div class="proof-year">
+            2025 →
+          </div>
+
+          <h3>
+            Cultural Technology
+          </h3>
+
+          <p>
+            HTML, CSS, JavaScript, Three.js and AI-assisted
+            production. Not technology as an identity —
+            technology as leverage.
+          </p>
+
+          <span class="proof-tag">
+            BUILD / LEVERAGE
+          </span>
+
+        </article>
+
+      </div>
+
+      <div style="text-align:center;margin-top:50px;">
+
+        <button
+          class="start-btn"
+          onclick="showFinal()"
+        >
+          COMPLETE THE CONVERGENCE →
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       FINAL
+  ====================================================== -->
+
+  <section id="final" class="screen">
+
+    <div class="final-inner">
+
+      <div class="final-eyebrow">
+        SYSTEM OUTPUT / 2026
+      </div>
+
+      <h2 class="final-title">
+        <span>GENERALIST.</span>
+        <span class="thin">STRATEGIC</span>
+        <span>OPERATOR.</span>
+      </h2>
+
+      <p class="final-copy">
+        I don't bring one perfect skill.
+        I bring a stack.
+        <br><br>
+        <strong>
+          Legal precision. Strategic thinking.
+          Cultural fluency. Creative practice.
+          Systems design. Technology.
+        </strong>
+        <br><br>
+        And the willingness to learn whatever the problem
+        requires next.
+      </p>
+
+      <div class="triad">
+
+        <div class="triad-card">
+          <div class="label">MAN</div>
+          <h3>What I did.</h3>
+          <p>
+            The credentials, roles, institutions,
+            decisions and measurable work.
+          </p>
+        </div>
+
+        <div class="triad-card">
+          <div class="label">MYTH</div>
+          <h3>How I operate.</h3>
+          <p>
+            The person who walks into ambiguity,
+            finds the bottleneck and starts connecting dots.
+          </p>
+        </div>
+
+        <div class="triad-card">
+          <div class="label">LEGEND</div>
+          <h3>What that unlocks.</h3>
+          <p>
+            A flexible operator who can move between
+            disciplines when the problem doesn't fit a job title.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="final-actions">
+
+        <button class="start-btn" onclick="restart()">
+          RUN AGAIN
+        </button>
+
+        <button
+          class="start-btn"
+          onclick="window.location.href='#proof'"
+        >
+          PROOF OF WORK
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       NAV
+  ====================================================== -->
+
+  <div class="nav">
+
+    <div class="nav-dot active" onclick="goTo(0)"></div>
+    <div class="nav-dot" onclick="goTo(1)"></div>
+    <div class="nav-dot" onclick="goTo(2)"></div>
+    <div class="nav-dot" onclick="goTo(3)"></div>
+    <div class="nav-dot" onclick="goTo(4)"></div>
+    <div class="nav-dot" onclick="goTo(5)"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   CAREER CONVERGENCE ENGINE
+   No external libraries.
+========================================================= */
+
+const screens = [
+  "intro",
+  "objections",
+  "engine",
+  "convergence",
+  "proof",
+  "final"
+];
+
+let currentScreen = 0;
+let objectionIndex = 0;
+let engineConverged = false;
+
+const nodes = [
+
+  {
+    name:"LEGAL PRECISION",
+    role:"Law / Institutions",
+    copy:
+      "Precision under constraint. Argumentation. Negotiation. Reading systems from the inside.",
+    proof:
+      "HCCH Judgments Convention — 22nd Diplomatic Session, The Hague, 2019.",
+    x:.16,
+    y:.27
+  },
+
+  {
+    name:"STRATEGY",
+    role:"Game Theory",
+    copy:
+      "Understanding incentives, competing interests and decisions when nobody has complete information.",
+    proof:
+      "Stanford Game Theory studies + practical strategic work.",
+    x:.31,
+    y:.72
+  },
+
+  {
+    name:"CULTURE",
+    role:"Arts / Public Policy",
+    copy:
+      "Context changes meaning. Stakeholders change systems. Culture is both environment and signal.",
+    proof:
+      "Academy of Fine Arts + Ministry of Culture + cultural policy work.",
+    x:.67,
+    y:.25
+  },
+
+  {
+    name:"GAMES",
+    role:"Systems / Experience",
+    copy:
+      "Turn systems into experiences. Make people interact with an idea rather than merely receive it.",
+    proof:
+      "Game development + educational design + UMIVERSE architecture.",
+    x:.84,
+    y:.43
+  },
+
+  {
+    name:"TECHNOLOGY",
+    role:"Build / Prototype",
+    copy:
+      "Understand enough of the medium to move from idea to prototype without waiting for permission.",
+    proof:
+      "HTML / CSS / JavaScript / Three.js / AI-assisted production.",
+    x:.72,
+    y:.72
+  },
+
+  {
+    name:"COMMUNICATION",
+    role:"Narrative / Copy",
+    copy:
+      "Compress complexity into something another person can understand, remember and act upon.",
+    proof:
+      "Cross-disciplinary writing, narrative design, stakeholder communication and public work.",
+    x:.34,
+    y:.25
+  }
+
+];
+
+
+/* =========================================================
+   SCREEN NAVIGATION
+========================================================= */
+
+function goTo(index){
+
+  if(index < 0) index = 0;
+  if(index >= screens.length) index = screens.length - 1;
+
+  screens.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.classList.toggle("active",i === index);
+  });
+
+  document.querySelectorAll(".nav-dot").forEach((dot,i)=>{
+    dot.classList.toggle("active",i === index);
+  });
+
+  currentScreen = index;
+
+  updateStatus();
+
+  if(index === 2){
+    setTimeout(initEngine,100);
+  }
+
+  if(index === 3){
+    animateConvergence();
+  }
+}
+
+
+function updateStatus(){
+
+  const status = document.getElementById("systemStatus");
+
+  const labels = [
+    "SYSTEM READY",
+    "OBJECTIONS DETECTED",
+    "SYSTEMS DISCONNECTED",
+    "SIGNAL CONVERGING",
+    "EVIDENCE VERIFIED",
+    "SYSTEM OUTPUT READY"
+  ];
+
+  status.textContent = labels[currentScreen];
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+function beginExperience(){
+
+  goTo(1);
+
+  document.getElementById("objections").onclick = advanceObjection;
+
+}
+
+
+/* =========================================================
+   OBJECTION SEQUENCE
+========================================================= */
+
+function advanceObjection(e){
+
+  if(e.target.closest("button")) return;
+
+  objectionIndex++;
+
+  const cards =
+    document.querySelectorAll(".objection-card");
+
+  cards.forEach((card,i)=>{
+    card.classList.toggle(
+      "active",
+      i === objectionIndex
+    );
+  });
+
+  if(objectionIndex >= 3){
+
+    document.getElementById("objections").onclick = null;
+
+    setTimeout(()=>{
+      goTo(2);
+    },350);
+
+  }
+
+}
+
+
+/* =========================================================
+   STAR FIELD
+========================================================= */
+
+const starCanvas =
+  document.getElementById("stars");
+
+const starCtx =
+  starCanvas.getContext("2d");
+
+let stars = [];
+
+function resizeStars(){
+
+  starCanvas.width = window.innerWidth *
+    devicePixelRatio;
+
+  starCanvas.height = window.innerHeight *
+    devicePixelRatio;
+
+  starCtx.setTransform(
+    devicePixelRatio,0,0,
+    devicePixelRatio,0,0
+  );
+
+  stars = [];
+
+  const count =
+    Math.min(260,
+      Math.floor(window.innerWidth *
+      window.innerHeight / 5500)
+    );
+
+  for(let i=0;i<count;i++){
+
+    stars.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight,
+      r:Math.random()*1.2,
+      a:.15+Math.random()*.55,
+      speed:.05+Math.random()*.2
+    });
+
+  }
+
+}
+
+function animateStars(){
+
+  starCtx.clearRect(
+    0,0,
+    window.innerWidth,
+    window.innerHeight
+  );
+
+  stars.forEach(s=>{
+
+    s.y -= s.speed;
+
+    if(s.y < 0){
+      s.y = window.innerHeight;
+      s.x = Math.random()*window.innerWidth;
+    }
+
+    starCtx.globalAlpha = s.a;
+
+    starCtx.fillStyle = "#c9e7ef";
+
+    starCtx.beginPath();
+    starCtx.arc(
+      s.x,
+      s.y,
+      s.r,
+      0,
+      Math.PI*2
+    );
+    starCtx.fill();
+
+  });
+
+  requestAnimationFrame(animateStars);
+
+}
+
+resizeStars();
+animateStars();
+
+
+/* =========================================================
+   ENGINE CANVAS
+========================================================= */
+
+const fieldCanvas =
+  document.getElementById("fieldCanvas");
+
+const fieldCtx =
+  fieldCanvas.getContext("2d");
+
+function resizeField(){
+
+  const rect =
+    fieldCanvas.getBoundingClientRect();
+
+  fieldCanvas.width =
+    rect.width * devicePixelRatio;
+
+  fieldCanvas.height =
+    rect.height * devicePixelRatio;
+
+  fieldCtx.setTransform(
+    devicePixelRatio,0,0,
+    devicePixelRatio,0,0
+  );
+
+}
+
+window.addEventListener("resize",()=>{
+  resizeStars();
+  resizeField();
+  positionNodes();
+});
+
+
+/* =========================================================
+   NODE CREATION
+========================================================= */
+
+function initEngine(){
+
+  resizeField();
+
+  const field =
+    document.getElementById("field");
+
+  document
+    .querySelectorAll(".skill-node")
+    .forEach(n=>n.remove());
+
+  nodes.forEach((node,index)=>{
+
+    const el =
+      document.createElement("div");
+
+    el.className = "skill-node";
+
+    el.innerHTML = `
+      <div class="node-number">
+        0${index+1}
+      </div>
+      <div class="node-name">
+        ${node.name}
+      </div>
+      <div class="node-role">
+        ${node.role}
+      </div>
+    `;
+
+    el.addEventListener("click",()=>{
+      inspectNode(index);
+    });
+
+    field.appendChild(el);
+
+  });
+
+  positionNodes();
+
+  document
+    .getElementById("cone")
+    .classList.add("visible");
+
+  requestAnimationFrame(drawConnections);
+
+}
+
+
+function positionNodes(){
+
+  const elements =
+    document.querySelectorAll(".skill-node");
+
+  elements.forEach((el,index)=>{
+
+    if(!nodes[index]) return;
+
+    const n = nodes[index];
+
+    let x = n.x;
+    let y = n.y;
+
+    if(engineConverged){
+
+      x = .5 + (index % 2 === 0 ? -.05 : .05);
+      y = .5 + (index - 2.5) * .045;
+
+    }
+
+    el.style.left =
+      `${x*100}%`;
+
+    el.style.top =
+      `${y*100}%`;
+
+    el.classList.toggle(
+      "connected",
+      engineConverged
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   CONNECTION LINES
+========================================================= */
+
+function getNodeCenters(){
+
+  const elements =
+    document.querySelectorAll(".skill-node");
+
+  const field =
+    document.getElementById("field");
+
+  const fieldRect =
+    field.getBoundingClientRect();
+
+  return [...elements].map(el=>{
+
+    const r =
+      el.getBoundingClientRect();
+
+    return {
+      x:r.left - fieldRect.left + r.width/2,
+      y:r.top - fieldRect.top + r.height/2
+    };
+
+  });
+
+}
+
+
+function drawConnections(){
+
+  const field =
+    document.getElementById("field");
+
+  const rect =
+    field.getBoundingClientRect();
+
+  fieldCtx.clearRect(
+    0,0,
+    rect.width,
+    rect.height
+  );
+
+  const centers =
+    getNodeCenters();
+
+  if(centers.length){
+
+    fieldCtx.lineWidth = 1;
+
+    for(let i=0;i<centers.length;i++){
+
+      for(let j=i+1;j<centers.length;j++){
+
+        const a = centers[i];
+        const b = centers[j];
+
+        const dx = b.x-a.x;
+        const dy = b.y-a.y;
+
+        const dist =
+          Math.sqrt(dx*dx+dy*dy);
+
+        const maxDist =
+          engineConverged ? 330 : 220;
+
+        if(dist > maxDist) continue;
+
+        const opacity =
+          engineConverged
+          ? .16
+          : Math.max(
+              0,
+              .16 - dist/maxDist*.12
+            );
+
+        fieldCtx.strokeStyle =
+          engineConverged
+          ? `rgba(93,228,255,${opacity})`
+          : `rgba(255,255,255,${opacity})`;
+
+        fieldCtx.beginPath();
+        fieldCtx.moveTo(a.x,a.y);
+        fieldCtx.lineTo(b.x,b.y);
+        fieldCtx.stroke();
+
+      }
+
+    }
+
+  }
+
+  requestAnimationFrame(drawConnections);
+
+}
+
+
+/* =========================================================
+   NODE DETAIL
+========================================================= */
+
+function inspectNode(index){
+
+  const node = nodes[index];
+
+  document
+    .getElementById("nodeDetail")
+    .classList.add("visible");
+
+  document
+    .getElementById("detailTitle")
+    .textContent = node.name;
+
+  document
+    .getElementById("detailCopy")
+    .textContent = node.copy;
+
+  document
+    .getElementById("detailProof")
+    .textContent = node.proof;
+
+  document
+    .getElementById("engineState")
+    .textContent =
+      `NODE ${String(index+1).padStart(2,"0")} / EVIDENCE LOADED`;
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetEngine(){
+
+  engineConverged = false;
+
+  positionNodes();
+
+  document
+    .getElementById("engineState")
+    .textContent =
+      "SYSTEMS DISCONNECTED";
+
+  document
+    .getElementById("nodeDetail")
+    .classList.remove("visible");
+
+}
+
+
+/* =========================================================
+   CONVERGENCE
+========================================================= */
+
+function convergeEngine(){
+
+  engineConverged = true;
+
+  document
+    .getElementById("engineState")
+    .textContent =
+      "CONVERGENCE VECTOR LOCKED";
+
+  document
+    .querySelector(".core-text strong")
+    .textContent =
+      "STRATEGIC OPERATOR";
+
+  positionNodes();
+
+  setTimeout(()=>{
+
+    document
+      .getElementById("nodeDetail")
+      .classList.add("visible");
+
+    document
+      .getElementById("detailTitle")
+      .textContent =
+        "THE STACK";
+
+    document
+      .getElementById("detailCopy")
+      .textContent =
+        "Different disciplines. One operating system. The value is in the connections.";
+
+    document
+      .getElementById("detailProof")
+      .textContent =
+        "PRECISION + CONTEXT + SYSTEMS + BUILD + COMMUNICATION = LEVERAGE";
+
+  },900);
+
+}
+
+
+/* =========================================================
+   CONVERGENCE SCREEN
+========================================================= */
+
+function animateConvergence(){
+
+  document
+    .querySelector(".vector-line")
+    .style.animation =
+      "none";
+
+  requestAnimationFrame(()=>{
+    document
+      .querySelector(".vector-line")
+      .style.animation =
+      "vectorGrow 2s ease both";
+  });
+
+}
+
+
+/* =========================================================
+   PROOF
+========================================================= */
+
+function showProof(){
+
+  goTo(4);
+
+}
+
+
+function showFinal(){
+
+  goTo(5);
+
+}
+
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+function restart(){
+
+  objectionIndex = 0;
+  engineConverged = false;
+
+  document
+    .querySelectorAll(".objection-card")
+    .forEach((card,i)=>{
+      card.classList.toggle(
+        "active",
+        i===0
+      );
+    });
+
+  goTo(0);
+
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener("keydown",(e)=>{
+
+  if(e.key === "ArrowRight"){
+
+    if(currentScreen === 1){
+
+      advanceObjection();
+
+    }else{
+
+      goTo(currentScreen+1);
+
+    }
+
+  }
+
+  if(e.key === "ArrowLeft"){
+    goTo(currentScreen-1);
+  }
+
+  if(e.key === "Escape"){
+    goTo(0);
+  }
+
+});
+
+
+/* =========================================================
+   TOUCH / SWIPE
+========================================================= */
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.addEventListener("touchstart",(e)=>{
+
+  touchStartX =
+    e.changedTouches[0].screenX;
+
+  touchStartY =
+    e.changedTouches[0].screenY;
+
+},{passive:true});
+
+
+document.addEventListener("touchend",(e)=>{
+
+  const dx =
+    e.changedTouches[0].screenX -
+    touchStartX;
+
+  const dy =
+    e.changedTouches[0].screenY -
+    touchStartY;
+
+  if(Math.abs(dx) < 60) return;
+
+  if(Math.abs(dx) < Math.abs(dy)) return;
+
+  if(dx < 0){
+
+    if(currentScreen === 1){
+      advanceObjection();
+    }else{
+      goTo(currentScreen+1);
+    }
+
+  }else{
+
+    goTo(currentScreen-1);
+
+  }
+
+},{passive:true});
+
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+
+resizeField();
+updateStatus();
+
+</script>
+
+</body>
+</html>
