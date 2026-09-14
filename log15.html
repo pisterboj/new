@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Career Build — Convergence Engine</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#050608;
+  color:#e9edf2;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+
+body{position:relative}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:.8;
+}
+
+#veil{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      transparent 0%,
+      rgba(5,6,8,.18) 35%,
+      rgba(5,6,8,.92) 100%
+    );
+}
+
+#ui{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-columns:minmax(220px,25vw) 1fr minmax(180px,22vw);
+  gap:18px;
+  padding:18px;
+}
+
+.panel{
+  background:rgba(7,9,12,.76);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);
+  box-shadow:0 15px 50px rgba(0,0,0,.35);
+}
+
+.left,
+.right{
+  padding:16px;
+}
+
+.center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+}
+
+.terminal{
+  width:min(760px,100%);
+  height:min(78vh,720px);
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  color:#7f8a96;
+  font-size:11px;
+  margin-bottom:16px;
+}
+
+.prompt{
+  color:#9aa6b2;
+  font-size:12px;
+  margin-bottom:10px;
+}
+
+#log{
+  flex:1;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  gap:13px;
+}
+
+.entry{
+  line-height:1.45;
+  font-size:13px;
+  opacity:.96;
+}
+
+.entry .tag{
+  font-size:10px;
+  letter-spacing:.12em;
+  margin-bottom:3px;
+  color:#73808d;
+}
+
+.entry.user{color:#dce3e9}
+.entry.ai{color:#aeb9c4}
+.entry.pivot{color:#f0d38a}
+.entry.fail{color:#e88f8f}
+.entry.build{color:#9bc5d6}
+.entry.crystal{color:#d4b8ed}
+
+.cursor{
+  display:inline-block;
+  width:7px;
+  height:14px;
+  background:#dce3e9;
+  vertical-align:-2px;
+  animation:blink .9s steps(1) infinite;
+}
+
+@keyframes blink{
+  50%{opacity:0}
+}
+
+h1{
+  font-size:14px;
+  letter-spacing:.14em;
+  margin:0 0 14px;
+}
+
+.small{
+  font-size:10px;
+  color:#697581;
+  line-height:1.6;
+}
+
+.node{
+  padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  font-size:11px;
+  color:#87929e;
+  transition:.5s;
+}
+
+.node.active{
+  color:#fff;
+  text-shadow:0 0 14px rgba(220,230,240,.6);
+}
+
+#stage{
+  font-size:11px;
+  letter-spacing:.15em;
+  color:#aeb9c4;
+  margin-top:16px;
+}
+
+#progress{
+  height:2px;
+  background:#20262c;
+  margin-top:9px;
+}
+
+#bar{
+  height:100%;
+  width:0;
+  background:#d7dee5;
+  transition:width .6s;
+}
+
+button{
+  margin-top:20px;
+  background:none;
+  color:#9ba7b2;
+  border:1px solid #343b43;
+  padding:8px 12px;
+  font:inherit;
+  font-size:10px;
+  cursor:pointer;
+}
+
+button:hover{
+  color:#fff;
+  border-color:#75808b;
+}
+
+/* SHIPPED */
+
+#ship{
+  display:none;
+  position:absolute;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  background:rgba(5,6,8,.94);
+  z-index:5;
+  text-align:center;
+}
+
+#ship .box{
+  border:1px solid rgba(255,255,255,.15);
+  padding:40px 55px;
+  box-shadow:0 0 80px rgba(255,255,255,.04);
+}
+
+#ship .big{
+  font-size:30px;
+  letter-spacing:.2em;
+  margin:15px 0 28px;
+}
+
+#ship .sub{
+  font-size:11px;
+  color:#88949f;
+  line-height:2;
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
+
+  #ui{
+    grid-template-columns:1fr;
+    padding:10px;
+  }
+
+  .left,
+  .right{
+    display:none;
+  }
+
+  .terminal{
+    height:82vh;
+    padding:15px;
+  }
+
+  .entry{
+    font-size:12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="scene"></canvas>
+<div id="veil"></div>
+
+<div id="ui">
+
+  <!-- LEFT -->
+  <aside class="panel left">
+
+    <h1>BUILD / FIELD</h1>
+
+    <div class="small">
+      The portfolio is not presented as a finished object.
+      The trajectory remains visible.
+    </div>
+
+    <div id="stage">RAW MATERIAL</div>
+
+    <div id="progress">
+      <div id="bar"></div>
+    </div>
+
+    <div style="height:18px"></div>
+
+    <div class="node">LAW / PRECISION</div>
+    <div class="node">CULTURE / CONTEXT</div>
+    <div class="node">GAMES / SYSTEMS</div>
+    <div class="node">TECH / LEVERAGE</div>
+    <div class="node">STRATEGY / CONVERGENCE</div>
+    <div class="node">GENERALIST / OPERATOR</div>
+
+  </aside>
+
+
+  <!-- CENTER -->
+  <main class="center">
+
+    <section class="panel terminal">
+
+      <div class="top">
+        <span>~/career/build</span>
+        <span id="seq">SEQ 01</span>
+      </div>
+
+      <div class="prompt">
+        $ journal --live --organic
+      </div>
+
+      <div id="log"></div>
+
+      <div>
+        <span class="cursor"></span>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- RIGHT -->
+  <aside class="panel right">
+
+    <h1>TRAJECTORY</h1>
+
+    <div class="small">
+      Uncertainty is not removed.
+      It is progressively constrained by decisions,
+      evidence and failed approaches.
+    </div>
+
+    <div class="small" style="margin-top:18px">
+      Background:
+      cone → spiral → convergence.
+    </div>
+
+    <button id="restart">
+      RESTART RUN
+    </button>
+
+  </aside>
+
+</div>
+
+
+<!-- FINAL STATE -->
+
+<div id="ship">
+
+  <div class="box">
+
+    <div class="sub">$ git status</div>
+
+    <div class="sub">
+      working tree clean.
+    </div>
+
+    <div class="big">
+      SHIPPED.
+    </div>
+
+    <div class="sub">
+      MAN / MYTH / LEGEND<br>
+      PROOF OF WORK<br><br>
+      THE SIGNAL CONVERGES.
+    </div>
+
+    <button id="again">
+      RUN AGAIN
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   BUILD JOURNAL
+========================================================= */
+
+const events=[
+
+{
+ t:"USER",
+ c:"user",
+ s:"I need to rethink the CV. I don't want another static résumé.",
+ stage:"RAW MATERIAL"
+},
+
+{
+ t:"AI",
+ c:"ai",
+ s:"Turn the CV into an experience: MAN / MYTH / LEGEND.",
+ stage:"FORM"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"Start with a video of shuffling through a notebook.",
+ stage:"FORM"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"The myth part feels ambiguous. It feels like AI slop. Cross it with what I actually did.",
+ stage:"FRICTION"
+},
+
+{
+ t:"AI",
+ c:"ai",
+ s:"Make MAN the bare-metal record. MYTH becomes the operating system. LEGEND becomes employer leverage.",
+ stage:"CRYSTALLIZE"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"MAN is the CV entry. Bare metal.",
+ stage:"CRYSTALLIZE"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"Add proof: the HCCH Judgment Convention adoption, 2019. Snapshots.",
+ stage:"PROOF"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"I also want an UNO flip card between MAN / MYTH / LEGEND.",
+ stage:"PIVOT"
+},
+
+{
+ t:"AI",
+ c:"ai",
+ s:"Use UNO as the objection mechanic: surface the question before the reader asks it.",
+ stage:"PIVOT"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"Yes. UNO should address questions and preemptively steer the narrative.",
+ stage:"CRYSTALLIZE"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"There could be a cone directed in one direction, building a moat, with a circular expanding vector and goalposts.",
+ stage:"BUILD"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"When the cone of slow uncertainty flips to the cone of convergent skill set maxxing.",
+ stage:"CRYSTALLIZE"
+},
+
+{
+ t:"AI",
+ c:"ai",
+ s:"The career is not a list. It is a convergence of capabilities.",
+ stage:"CONVERGENCE"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"Proof of work. Proof of flexibility. Proof of adaptability. Proof of stacking skills.",
+ stage:"PROOF"
+},
+
+{
+ t:"BUILD",
+ c:"build",
+ s:"CAREER SNIPER prototype assembled.",
+ stage:"PROTOTYPE"
+},
+
+{
+ t:"FAIL",
+ c:"fail",
+ s:"GitHub: first card works. Nothing else runs.",
+ stage:"OBSTACLE"
+},
+
+{
+ t:"FAIL",
+ c:"fail",
+ s:"More index iterations. Upload. Open. Broken. Inspect. Rebuild.",
+ stage:"OBSTACLE"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"Career Sniper is not really the metaphor.",
+ stage:"RETURN"
+},
+
+{
+ t:"AI",
+ c:"ai",
+ s:"Pivot: CAREER CONVERGENCE ENGINE.",
+ stage:"PIVOT"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"You don't shoot skills. You eliminate assumptions.",
+ stage:"CRYSTALLIZE"
+},
+
+{
+ t:"AI",
+ c:"ai",
+ s:"LAW → CULTURE → GAMES → TECHNOLOGY → STRATEGY.",
+ stage:"CONVERGENCE"
+},
+
+{
+ t:"USER",
+ c:"user",
+ s:"The end should wrap me up as the generalist ready for the future.",
+ stage:"CONVERGENCE"
+},
+
+{
+ t:"BUILD",
+ c:"build",
+ s:"MAN / MYTH / LEGEND → proof of work → strategic operator.",
+ stage:"SHIP"
+},
+
+{
+ t:"SHIP",
+ c:"crystal",
+ s:"The CV is the solution. The build log proves the problem-solving.",
+ stage:"SHIP"
+}
+
+];
+
+const log=document.getElementById("log");
+const stage=document.getElementById("stage");
+const bar=document.getElementById("bar");
+const seq=document.getElementById("seq");
+
+const nodes=[
+  ...document.querySelectorAll(".node")
+];
+
+let idx=0;
+let timer=null;
+
+
+/* TYPE ENTRY */
+
+function typeEntry(e){
+
+  const el=document.createElement("div");
+
+  el.className="entry "+e.c;
+
+  el.innerHTML=
+    '<div class="tag">'+e.t+'</div><span></span>';
+
+  log.appendChild(el);
+
+  const target=el.querySelector("span");
+  const text=e.s;
+
+  let n=0;
+
+  const typing=setInterval(()=>{
+
+    target.textContent=text.slice(0,++n);
+
+    if(n>=text.length){
+
+      clearInterval(typing);
+
+      idx++;
+
+      seq.textContent=
+        "SEQ "+
+        String(idx).padStart(2,"0");
+
+      stage.textContent=e.stage;
+
+      bar.style.width=
+        (idx/events.length*100)+"%";
+
+      const map=
+        Math.min(
+          5,
+          Math.floor(idx/events.length*6)
+        );
+
+      nodes.forEach((x,i)=>{
+        x.classList.toggle(
+          "active",
+          i===map
+        );
+      });
+
+      while(log.children.length>7){
+        log.removeChild(log.firstChild);
+      }
+
+      if(idx<events.length){
+
+        timer=setTimeout(
+          ()=>typeEntry(events[idx]),
+          700
+        );
+
+      }else{
+
+        setTimeout(()=>{
+          document.getElementById("ship")
+            .style.display="flex";
+        },1200);
+
+      }
+
+    }
+
+  },12);
+}
+
+
+/* RESET */
+
+function reset(){
+
+  clearTimeout(timer);
+
+  idx=0;
+
+  log.innerHTML="";
+
+  bar.style.width="0";
+
+  stage.textContent="RAW MATERIAL";
+
+  nodes.forEach(x=>
+    x.classList.remove("active")
+  );
+
+  document.getElementById("ship")
+    .style.display="none";
+
+  seq.textContent="SEQ 01";
+
+  setTimeout(
+    ()=>typeEntry(events[0]),
+    500
+  );
+}
+
+document
+  .getElementById("restart")
+  .onclick=reset;
+
+document
+  .getElementById("again")
+  .onclick=reset;
+
+
+/* =========================================================
+   CONVERGENCE FIELD
+========================================================= */
+
+const canvas=
+  document.getElementById("scene");
+
+const ctx=
+  canvas.getContext("2d");
+
+let W,H,dpr,t=0;
+
+function resize(){
+
+  dpr=devicePixelRatio||1;
+
+  W=innerWidth;
+  H=innerHeight;
+
+  canvas.width=W*dpr;
+  canvas.height=H*dpr;
+
+  ctx.setTransform(
+    dpr,0,0,dpr,0,0
+  );
+}
+
+addEventListener(
+  "resize",
+  resize
+);
+
+resize();
+
+
+/* SKILL NODES */
+
+const skills=[
+
+  ["LAW",0.00],
+
+  ["CULTURE",0.22],
+
+  ["GAMES",0.43],
+
+  ["TECH",0.64],
+
+  ["STRATEGY",0.82],
+
+  ["OPERATOR",1]
+
+];
+
+
+/* DRAW */
+
+function draw(){
+
+  t+=.003;
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+  const cx=W*.53;
+  const cy=H*.53;
+
+  const max=
+    Math.min(W,H)*.46;
+
+  ctx.save();
+
+  ctx.translate(cx,cy);
+
+
+  /* -----------------------------------------
+     CONE
+  ----------------------------------------- */
+
+  for(let r=1;r<=8;r++){
+
+    const p=r/8;
+
+    const rr=
+      max*(.18+p*.9);
+
+    const spread=
+      (1-p)*1.05+.10;
+
+    ctx.beginPath();
+
+    for(
+      let a=-Math.PI*spread;
+      a<=Math.PI*spread;
+      a+=.035
+    ){
+
+      const x=
+        Math.cos(a+t*.18)*
+        rr*
+        (.72+.28*p);
+
+      const y=
+        Math.sin(a+t*.18)*
+        rr*
+        (.25+.75*p);
+
+      if(
+        a===
+        -Math.PI*spread
+      ){
+
+        ctx.moveTo(x,y);
+
+      }else{
+
+        ctx.lineTo(x,y);
+
+      }
+    }
+
+    ctx.strokeStyle=
+      "rgba(160,175,190,"+
+      (0.035+(1-p)*.025)+
+      ")";
+
+    ctx.lineWidth=1;
+
+    ctx.stroke();
+  }
+
+
+  /* -----------------------------------------
+     SPIRAL TRAJECTORY
+  ----------------------------------------- */
+
+  ctx.beginPath();
+
+  for(
+    let a=0;
+    a<Math.PI*9;
+    a+=.025
+  ){
+
+    const p=
+      a/(Math.PI*9);
+
+    const rr=
+      max*(.88-p*.76);
+
+    const x=
+      Math.cos(a+t)*
+      rr;
+
+    const y=
+      Math.sin(a+t)*
+      rr*.38;
+
+    if(a===0){
+
+      ctx.moveTo(x,y);
+
+    }else{
+
+      ctx.lineTo(x,y);
+
+    }
+  }
+
+  ctx.strokeStyle=
+    "rgba(190,205,218,.23)";
+
+  ctx.lineWidth=1.4;
+
+  ctx.stroke();
+
+
+  /* -----------------------------------------
+     SKILL NODES
+  ----------------------------------------- */
+
+  skills.forEach((s,i)=>{
+
+    const p=s[1];
+
+    const a=
+      p*Math.PI*2.1+
+      t*.18;
+
+    const rr=
+      max*(.82-p*.72);
+
+    const x=
+      Math.cos(a)*rr;
+
+    const y=
+      Math.sin(a)*rr*.38;
+
+    const pulse=
+      1+
+      Math.sin(t*5+i)*.15;
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+      x,
+      y,
+      3.5*pulse,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fillStyle=
+      "rgba(220,230,238,.75)";
+
+    ctx.fill();
+
+
+    ctx.font=
+      "9px ui-monospace,monospace";
+
+    ctx.fillStyle=
+      "rgba(170,183,195,.48)";
+
+    ctx.fillText(
+      s[0],
+      x+8,
+      y+3
+    );
+
+  });
+
+
+  /* -----------------------------------------
+     CONVERGENCE POINT
+  ----------------------------------------- */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    0,
+    0,
+    5+Math.sin(t*4),
+    0,
+    Math.PI*2
+  );
+
+  ctx.strokeStyle=
+    "rgba(235,240,245,.8)";
+
+  ctx.stroke();
+
+
+  ctx.restore();
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+reset();
+
+</script>
+
+</body>
+</html>
