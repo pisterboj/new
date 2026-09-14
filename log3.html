@@ -1,0 +1,1767 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MAN / MYTH / LEGEND — Convergence Engine</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#030506;
+  color:#eaf8fa;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  cursor:grab;
+}
+
+canvas.dragging{
+  cursor:grabbing;
+}
+
+#hud{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+
+.header{
+  position:absolute;
+  left:28px;
+  top:24px;
+}
+
+.kicker{
+  font-size:9px;
+  letter-spacing:3px;
+  color:rgba(255,255,255,.36);
+}
+
+h1{
+  margin:7px 0 0;
+  font-size:clamp(22px,3vw,40px);
+  font-weight:400;
+  letter-spacing:-1.5px;
+}
+
+h1 span{
+  color:rgba(255,255,255,.28);
+}
+
+.mode{
+  position:absolute;
+  right:28px;
+  top:25px;
+  text-align:right;
+  font-size:9px;
+  line-height:1.8;
+  color:rgba(255,255,255,.32);
+}
+
+.mode b{
+  color:#dffaff;
+  font-weight:400;
+}
+
+#phase{
+  position:absolute;
+  right:28px;
+  top:105px;
+  width:260px;
+  text-align:right;
+}
+
+.phase-label{
+  font-size:9px;
+  letter-spacing:2.5px;
+  color:rgba(255,255,255,.35);
+}
+
+#phaseName{
+  margin-top:7px;
+  font-size:25px;
+  letter-spacing:-1px;
+}
+
+#phaseCopy{
+  margin-top:7px;
+  font-size:9px;
+  line-height:1.6;
+  color:rgba(255,255,255,.30);
+}
+
+#hint{
+  position:absolute;
+  right:28px;
+  bottom:28px;
+  text-align:right;
+  font-size:9px;
+  line-height:1.8;
+  color:rgba(255,255,255,.26);
+}
+
+#hint b{
+  color:rgba(235,252,255,.62);
+  font-weight:400;
+}
+
+#terminal{
+  position:absolute;
+  left:28px;
+  bottom:28px;
+  width:min(620px,calc(100% - 56px));
+  height:235px;
+
+  background:rgba(3,7,9,.76);
+  border:1px solid rgba(255,255,255,.11);
+  backdrop-filter:blur(14px);
+
+  pointer-events:auto;
+}
+
+.term-head{
+  height:32px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+
+  display:flex;
+  align-items:center;
+  gap:6px;
+
+  padding:0 11px;
+
+  font-size:8px;
+  letter-spacing:1.4px;
+  color:rgba(255,255,255,.28);
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+}
+
+#log{
+  padding:12px 14px;
+  height:calc(100% - 32px);
+  overflow:hidden;
+  font-size:10px;
+  line-height:1.55;
+}
+
+.line{
+  white-space:pre-wrap;
+}
+
+.user{color:#e7fbfe}
+.ai{color:rgba(215,241,244,.48)}
+.pivot{color:#d6f7fa}
+.build{color:#94e5ef}
+.fail{color:#ffaea2}
+.return{color:#e5d4a5}
+.crys{color:#c0efc9}
+.ship{color:#fff}
+
+.controls{
+  position:absolute;
+  left:28px;
+  top:105px;
+  display:flex;
+  gap:6px;
+  pointer-events:auto;
+}
+
+button{
+  background:rgba(5,9,11,.72);
+  border:1px solid rgba(255,255,255,.12);
+  color:rgba(235,250,252,.62);
+  padding:8px 10px;
+  font:9px monospace;
+  letter-spacing:1px;
+  cursor:pointer;
+}
+
+button:hover{
+  color:white;
+  border-color:rgba(210,245,250,.4);
+}
+
+@media(max-width:700px){
+
+  .header{
+    left:16px;
+    top:16px;
+  }
+
+  .mode{
+    right:16px;
+    top:16px;
+  }
+
+  #phase{
+    right:16px;
+    top:85px;
+    width:190px;
+  }
+
+  #hint{
+    display:none;
+  }
+
+  #terminal{
+    left:16px;
+    bottom:16px;
+    width:calc(100% - 32px);
+    height:215px;
+  }
+
+  .controls{
+    left:16px;
+    top:85px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="world"></canvas>
+
+<div id="hud">
+
+  <div class="header">
+    <div class="kicker">
+      CAREER CONVERGENCE ENGINE / 3D TRACE
+    </div>
+
+    <h1>
+      MAN <span>/</span> MYTH <span>/</span> LEGEND
+    </h1>
+  </div>
+
+  <div class="mode">
+    CAMERA <b id="cameraMode">ORBIT</b><br>
+    VECTOR <b id="vector">CONVERGING</b><br>
+    DEPTH <b id="depth">—</b>
+  </div>
+
+  <div id="phase">
+    <div class="phase-label">
+      CURRENT VECTOR
+    </div>
+
+    <div id="phaseName">
+      UNCERTAINTY
+    </div>
+
+    <div id="phaseCopy">
+      Wide possibility space.
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="follow">FOLLOW SIGNAL</button>
+    <button id="reset">RESET VIEW</button>
+  </div>
+
+  <div id="terminal">
+
+    <div class="term-head">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+
+      BUILD JOURNAL
+    </div>
+
+    <div id="log"></div>
+
+  </div>
+
+  <div id="hint">
+
+    <b>DRAG</b> orbit<br>
+    <b>W / S</b> move through cone<br>
+    <b>A / D</b> rotate surface<br>
+    <b>SCROLL</b> zoom<br>
+    <b>R</b> reset
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CANVAS 3D ENGINE
+   No libraries.
+   No WebGL dependency.
+   Actual perspective projection.
+========================================================= */
+
+const canvas =
+  document.getElementById("world");
+
+const ctx =
+  canvas.getContext("2d");
+
+let W = 0;
+let H = 0;
+let DPR = 1;
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+const camera = {
+
+  yaw: 0.45,
+  pitch: -0.12,
+  distance: 10,
+
+  targetX: 3,
+  targetY: 0,
+  targetZ: 0
+
+};
+
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+
+let followSignal = false;
+
+
+/* =========================================================
+   WORLD
+
+   Cone axis runs along +X.
+
+   Wide end:
+   x = 0
+
+   Apex:
+   x = 10
+========================================================= */
+
+const CONE_LENGTH = 10;
+const RADIUS = 4;
+
+
+/* Radius at position x */
+
+function coneRadius(x){
+
+  return RADIUS *
+    (1 - x / CONE_LENGTH);
+
+}
+
+
+/* =========================================================
+   VECTOR HELPERS
+========================================================= */
+
+function add(a,b){
+
+  return {
+    x:a.x+b.x,
+    y:a.y+b.y,
+    z:a.z+b.z
+  };
+
+}
+
+
+function sub(a,b){
+
+  return {
+    x:a.x-b.x,
+    y:a.y-b.y,
+    z:a.z-b.z
+  };
+
+}
+
+
+function mul(a,s){
+
+  return {
+    x:a.x*s,
+    y:a.y*s,
+    z:a.z*s
+  };
+
+}
+
+
+function dot(a,b){
+
+  return (
+    a.x*b.x +
+    a.y*b.y +
+    a.z*b.z
+  );
+
+}
+
+
+function length(v){
+
+  return Math.sqrt(
+    dot(v,v)
+  );
+
+}
+
+
+/* =========================================================
+   3D → SCREEN
+========================================================= */
+
+function project(p){
+
+  let v =
+    sub(
+      p,
+      {
+        x:camera.targetX,
+        y:camera.targetY,
+        z:camera.targetZ
+      }
+    );
+
+
+  /* yaw */
+
+  const cy =
+    Math.cos(camera.yaw);
+
+  const sy =
+    Math.sin(camera.yaw);
+
+  let x =
+    v.x * cy -
+    v.z * sy;
+
+  let z =
+    v.x * sy +
+    v.z * cy;
+
+
+  /* pitch */
+
+  const cp =
+    Math.cos(camera.pitch);
+
+  const sp =
+    Math.sin(camera.pitch);
+
+  let y =
+    v.y * cp -
+    z * sp;
+
+  z =
+    v.y * sp +
+    z * cp;
+
+
+  z += camera.distance;
+
+
+  if(z <= .05)
+    return null;
+
+
+  const focal =
+    Math.min(W,H) * .92;
+
+
+  return {
+
+    x:W/2 + x * focal / z,
+
+    y:H/2 - y * focal / z,
+
+    z:z,
+
+    scale:focal/z
+
+  };
+
+}
+
+
+/* =========================================================
+   CONE SURFACE
+========================================================= */
+
+function surfacePoint(x,theta){
+
+  const r =
+    coneRadius(x);
+
+  return {
+
+    x:x,
+
+    y:Math.cos(theta)*r,
+
+    z:Math.sin(theta)*r
+
+  };
+
+}
+
+
+/* =========================================================
+   SURFACE TRAJECTORY
+
+   This is deliberately a spiral.
+
+   It travels FORWARD along X
+   while rotating around the
+   inside of the cone.
+========================================================= */
+
+function trajectory(t){
+
+  const x =
+    t * (CONE_LENGTH - .25);
+
+  const theta =
+    -1.15 +
+    t * Math.PI * 4.2;
+
+  return surfacePoint(
+    x,
+    theta
+  );
+
+}
+
+
+/* =========================================================
+   SKILL NODES
+========================================================= */
+
+const nodes = [
+
+  {
+    name:"LAW",
+    sub:"PRECISION",
+    t:.08
+  },
+
+  {
+    name:"CULTURE",
+    sub:"CONTEXT",
+    t:.27
+  },
+
+  {
+    name:"GAMES",
+    sub:"SYSTEMS",
+    t:.48
+  },
+
+  {
+    name:"TECH",
+    sub:"LEVERAGE",
+    t:.70
+  },
+
+  {
+    name:"STRATEGY",
+    sub:"CONVERGENCE",
+    t:.91
+  }
+
+];
+
+
+/* =========================================================
+   TRAJECTORY PROGRESS
+========================================================= */
+
+let progress = 0;
+
+let lastTime =
+  performance.now();
+
+
+/* =========================================================
+   DRAW HELPERS
+========================================================= */
+
+function line3D(points,style,width=1){
+
+  ctx.beginPath();
+
+  let started = false;
+
+  for(const p of points){
+
+    const q =
+      project(p);
+
+    if(!q)
+      continue;
+
+    if(!started){
+
+      ctx.moveTo(
+        q.x,
+        q.y
+      );
+
+      started = true;
+
+    }else{
+
+      ctx.lineTo(
+        q.x,
+        q.y
+      );
+
+    }
+
+  }
+
+  ctx.strokeStyle = style;
+  ctx.lineWidth = width;
+  ctx.stroke();
+
+}
+
+
+function ellipse3D(p,r,style){
+
+  const q =
+    project(p);
+
+  if(!q)
+    return;
+
+
+  const size =
+    Math.max(
+      2,
+      r*q.scale
+    );
+
+
+  ctx.beginPath();
+
+  ctx.arc(
+    q.x,
+    q.y,
+    size,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle = style;
+
+  ctx.fill();
+
+}
+
+
+/* =========================================================
+   DRAW CONE
+========================================================= */
+
+function drawCone(){
+
+  const rings = 22;
+  const segments = 64;
+
+
+  /* longitudinal surface */
+
+  for(
+    let i=0;
+    i<segments;
+    i++
+  ){
+
+    const theta =
+      (i/segments) *
+      Math.PI*2;
+
+
+    const points = [];
+
+    for(
+      let j=0;
+      j<=rings;
+      j++
+    ){
+
+      const x =
+        j/rings *
+        (CONE_LENGTH-.05);
+
+      points.push(
+        surfacePoint(
+          x,
+          theta
+        )
+      );
+
+    }
+
+    line3D(
+      points,
+      "rgba(150,220,230,.045)",
+      1
+    );
+
+  }
+
+
+  /* cross-section rings */
+
+  for(
+    let j=0;
+    j<10;
+    j++
+  ){
+
+    const x =
+      j/10 *
+      (CONE_LENGTH-.05);
+
+    const points = [];
+
+    for(
+      let i=0;
+      i<=segments;
+      i++
+    ){
+
+      const theta =
+        i/segments *
+        Math.PI*2;
+
+      points.push(
+        surfacePoint(
+          x,
+          theta
+        )
+      );
+
+    }
+
+    line3D(
+      points,
+      "rgba(150,220,230,.055)",
+      1
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW AXIS
+========================================================= */
+
+function drawAxis(){
+
+  line3D(
+    [
+      {x:0,y:0,z:0},
+      {x:CONE_LENGTH,y:0,z:0}
+    ],
+    "rgba(220,250,255,.045)",
+    1
+  );
+
+}
+
+
+/* =========================================================
+   DRAW TRAJECTORY
+========================================================= */
+
+function drawTrajectory(){
+
+  const points = [];
+
+  const count = 260;
+
+
+  for(
+    let i=0;
+    i<count;
+    i++
+  ){
+
+    const t =
+      i/(count-1);
+
+    points.push(
+      trajectory(t)
+    );
+
+  }
+
+
+  line3D(
+    points,
+    "rgba(120,210,225,.18)",
+    1
+  );
+
+
+  /* glowing accumulated section */
+
+  const active = [];
+
+  for(
+    let i=0;
+    i<=Math.floor(progress*(count-1));
+    i++
+  ){
+
+    active.push(
+      points[i]
+    );
+
+  }
+
+
+  line3D(
+    active,
+    "rgba(225,251,255,.72)",
+    2
+  );
+
+
+  /* signal */
+
+  const signal =
+    trajectory(progress);
+
+  ellipse3D(
+    signal,
+    .14,
+    "#efffff"
+  );
+
+
+  ellipse3D(
+    signal,
+    .35,
+    "rgba(100,230,245,.10)"
+  );
+
+}
+
+
+/* =========================================================
+   DRAW NODES
+========================================================= */
+
+function drawNodes(){
+
+  const visible = [];
+
+
+  for(const node of nodes){
+
+    const p =
+      trajectory(node.t);
+
+    const q =
+      project(p);
+
+    if(!q)
+      continue;
+
+
+    visible.push({
+      node,
+      p,
+      q
+    });
+
+  }
+
+
+  /*
+    Sort by depth so far nodes
+    render behind near nodes.
+  */
+
+  visible.sort(
+    (a,b)=>
+      b.q.z-a.q.z
+  );
+
+
+  for(const item of visible){
+
+    const {
+      node,
+      q
+    } = item;
+
+
+    const radius =
+      Math.max(
+        3,
+        7*q.scale
+      );
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+      q.x,
+      q.y,
+      radius*2.4,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fillStyle =
+      "rgba(110,230,240,.035)";
+
+    ctx.fill();
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+      q.x,
+      q.y,
+      radius,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fillStyle =
+      "#071014";
+
+    ctx.strokeStyle =
+      "rgba(190,240,248,.48)";
+
+    ctx.lineWidth = 1;
+
+    ctx.fill();
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+      q.x,
+      q.y,
+      Math.max(1.5,radius*.18),
+      0,
+      Math.PI*2
+    );
+
+    ctx.fillStyle =
+      "#e5fdff";
+
+    ctx.fill();
+
+
+    ctx.font =
+      `${Math.max(8,10*q.scale)}px monospace`;
+
+    ctx.textAlign =
+      "center";
+
+    ctx.fillStyle =
+      "rgba(235,250,252,.72)";
+
+    ctx.fillText(
+      node.name,
+      q.x,
+      q.y - radius*2.2
+    );
+
+
+    ctx.font =
+      `${Math.max(6,7*q.scale)}px monospace`;
+
+    ctx.fillStyle =
+      "rgba(235,250,252,.28)";
+
+    ctx.fillText(
+      node.sub,
+      q.x,
+      q.y - radius*1.25
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DRAW APEX
+========================================================= */
+
+function drawApex(){
+
+  const p = {
+    x:CONE_LENGTH,
+    y:0,
+    z:0
+  };
+
+  const q =
+    project(p);
+
+  if(!q)
+    return;
+
+
+  ctx.beginPath();
+
+  ctx.arc(
+    q.x,
+    q.y,
+    Math.max(2,8*q.scale),
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "rgba(225,252,255,.14)";
+
+  ctx.fill();
+
+
+  ctx.beginPath();
+
+  ctx.arc(
+    q.x,
+    q.y,
+    Math.max(1.5,3*q.scale),
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "#ffffff";
+
+  ctx.fill();
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /* subtle vignette */
+
+  const gradient =
+    ctx.createRadialGradient(
+      W*.5,
+      H*.48,
+      0,
+      W*.5,
+      H*.48,
+      Math.max(W,H)*.72
+    );
+
+  gradient.addColorStop(
+    0,
+    "rgba(20,40,46,.10)"
+  );
+
+  gradient.addColorStop(
+    1,
+    "rgba(0,0,0,.45)"
+  );
+
+  ctx.fillStyle =
+    gradient;
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  drawCone();
+
+  drawAxis();
+
+  drawTrajectory();
+
+  drawApex();
+
+  drawNodes();
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(now){
+
+  const dt =
+    Math.min(
+      50,
+      now-lastTime
+    );
+
+  lastTime = now;
+
+
+  if(!dragging){
+
+    /*
+      Slow autonomous orbit.
+
+      This makes the cone visibly 3D
+      even before the user touches it.
+    */
+
+    camera.yaw +=
+      dt*.000035;
+
+  }
+
+
+  if(!followSignal){
+
+    progress +=
+      dt*.000018;
+
+    if(progress > 1)
+      progress = 0;
+
+  }
+
+
+  if(followSignal){
+
+    const p =
+      trajectory(progress);
+
+    /*
+      Camera follows the signal's
+      longitudinal position while
+      preserving the user's orbit.
+    */
+
+    camera.targetX =
+      p.x*.78;
+
+  }
+
+
+  updateHUD();
+
+  render();
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+requestAnimationFrame(
+  animate
+);
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resize(){
+
+  DPR =
+    Math.min(
+      window.devicePixelRatio || 1,
+      2
+    );
+
+  W =
+    window.innerWidth;
+
+  H =
+    window.innerHeight;
+
+
+  canvas.width =
+    W*DPR;
+
+  canvas.height =
+    H*DPR;
+
+  canvas.style.width =
+    W+"px";
+
+  canvas.style.height =
+    H+"px";
+
+
+  ctx.setTransform(
+    DPR,
+    0,
+    0,
+    DPR,
+    0,
+    0
+  );
+
+}
+
+window.addEventListener(
+  "resize",
+  resize
+);
+
+resize();
+
+
+/* =========================================================
+   MOUSE ORBIT
+========================================================= */
+
+canvas.addEventListener(
+  "pointerdown",
+  event => {
+
+    dragging = true;
+
+    canvas.classList.add(
+      "dragging"
+    );
+
+    lastX =
+      event.clientX;
+
+    lastY =
+      event.clientY;
+
+    canvas.setPointerCapture(
+      event.pointerId
+    );
+
+  }
+);
+
+
+canvas.addEventListener(
+  "pointermove",
+  event => {
+
+    if(!dragging)
+      return;
+
+
+    const dx =
+      event.clientX-lastX;
+
+    const dy =
+      event.clientY-lastY;
+
+
+    lastX =
+      event.clientX;
+
+    lastY =
+      event.clientY;
+
+
+    camera.yaw -=
+      dx*.006;
+
+    camera.pitch -=
+      dy*.004;
+
+
+    camera.pitch =
+      Math.max(
+        -1.35,
+        Math.min(
+          1.35,
+          camera.pitch
+        )
+      );
+
+  }
+);
+
+
+canvas.addEventListener(
+  "pointerup",
+  () => {
+
+    dragging = false;
+
+    canvas.classList.remove(
+      "dragging"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   WHEEL ZOOM
+========================================================= */
+
+canvas.addEventListener(
+  "wheel",
+  event => {
+
+    event.preventDefault();
+
+    camera.distance +=
+      event.deltaY*.008;
+
+
+    camera.distance =
+      Math.max(
+        4,
+        Math.min(
+          22,
+          camera.distance
+        )
+      );
+
+  },
+  {passive:false}
+);
+
+
+/* =========================================================
+   KEYBOARD NAVIGATION
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    const key =
+      event.key.toLowerCase();
+
+
+    /* forward */
+
+    if(key === "w"){
+
+      progress += .008;
+
+    }
+
+
+    /* backward */
+
+    if(key === "s"){
+
+      progress -= .008;
+
+    }
+
+
+    /* rotate around surface */
+
+    if(key === "a"){
+
+      camera.yaw -= .07;
+
+    }
+
+
+    if(key === "d"){
+
+      camera.yaw += .07;
+
+    }
+
+
+    /* reset */
+
+    if(key === "r"){
+
+      resetView();
+
+    }
+
+
+    progress =
+      (progress+1)%1;
+
+  }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetView(){
+
+  camera.yaw =
+    .45;
+
+  camera.pitch =
+    -.12;
+
+  camera.distance =
+    10;
+
+  camera.targetX =
+    3;
+
+  camera.targetY =
+    0;
+
+  camera.targetZ =
+    0;
+
+}
+
+
+/* =========================================================
+   FOLLOW
+========================================================= */
+
+document
+  .getElementById("follow")
+  .addEventListener(
+    "click",
+    function(){
+
+      followSignal =
+        !followSignal;
+
+      this.textContent =
+        followSignal
+          ? "FOLLOWING"
+          : "FOLLOW SIGNAL";
+
+    }
+  );
+
+
+document
+  .getElementById("reset")
+  .addEventListener(
+    "click",
+    resetView
+  );
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+  const phaseName =
+    document.getElementById(
+      "phaseName"
+    );
+
+  const phaseCopy =
+    document.getElementById(
+      "phaseCopy"
+    );
+
+  const depth =
+    document.getElementById(
+      "depth"
+    );
+
+
+  if(progress < .22){
+
+    phaseName.textContent =
+      "UNCERTAINTY";
+
+    phaseCopy.textContent =
+      "Wide possibility space. " +
+      "The problem has not converged.";
+
+  }
+
+  else if(progress < .48){
+
+    phaseName.textContent =
+      "EXPLORATION";
+
+    phaseCopy.textContent =
+      "Law, culture and games begin " +
+      "crossing into one system.";
+
+  }
+
+  else if(progress < .76){
+
+    phaseName.textContent =
+      "CONVERGENCE";
+
+    phaseCopy.textContent =
+      "The apparently separate skills " +
+      "start reinforcing one another.";
+
+  }
+
+  else{
+
+    phaseName.textContent =
+      "STRATEGIC LEVERAGE";
+
+    phaseCopy.textContent =
+      "The cone narrows. " +
+      "The signal becomes directional.";
+
+  }
+
+
+  const p =
+    trajectory(progress);
+
+  const q =
+    project(p);
+
+  if(q){
+
+    depth.textContent =
+      Math.round(
+        q.z*10
+      )/10;
+
+  }
+
+}
+
+
+/* =========================================================
+   BUILD JOURNAL
+========================================================= */
+
+const entries = [
+
+  ["USER",
+   "I want to rethink the CV. Not another static resume."],
+
+  ["AI",
+   "Turn the CV into an experience."],
+
+  ["USER",
+   "Let's view it."],
+
+  ["BUILD",
+   "Interactive notebook / shuffle / first-person entry point."],
+
+  ["USER",
+   "Starts with a video of shuffling through a notebook."],
+
+  ["BUILD",
+   "Bookmaker's Office / Career Coupon / Runner."],
+
+  ["USER",
+   "The myth part feels ambiguous."],
+
+  ["PIVOT",
+   "The metaphor cannot replace the evidence."],
+
+  ["CRYSTALLIZE",
+   "MAN = bare metal. MYTH = operating system. LEGEND = leverage."],
+
+  ["USER",
+   "I want proof of work. HCCH Judgment Convention adoption, 2019."],
+
+  ["BUILD",
+   "Evidence becomes visible."],
+
+  ["USER",
+   "UNO flip card between MAN / MYTH / LEGEND."],
+
+  ["BUILD",
+   "UNO becomes an objection mechanic."],
+
+  ["USER",
+   "Cone directed in one direction. Build a moat."],
+
+  ["CRYSTALLIZE",
+   "Cone of uncertainty → converging skills → strategic leverage."],
+
+  ["USER",
+   "Proof of work. Flexibility. Adaptability. Stacking skills."],
+
+  ["BUILD",
+   "Career Sniper prototype."],
+
+  ["FAIL",
+   "Too much game UI. It makes the candidate look like a score."],
+
+  ["RETURN",
+   "Strip away the score. Keep the mechanism."],
+
+  ["CRYSTALLIZE",
+   "You don't shoot skills. You eliminate assumptions."],
+
+  ["BUILD",
+   "CAREER CONVERGENCE ENGINE."],
+
+  ["AI",
+   "LAW → CULTURE → GAMES → TECHNOLOGY → STRATEGY."],
+
+  ["USER",
+   "The end should wrap me up as the generalist ready for the future."],
+
+  ["BUILD",
+   "A 3D cone becomes the environment itself."],
+
+  ["USER",
+   "Run inside the cone, forward along the inner surface."],
+
+  ["BUILD",
+   "Surface-bound spiral trajectory."],
+
+  ["BUILD",
+   "Now the viewer can enter the cone and navigate it."],
+
+  ["SHIP",
+   "MAN / MYTH / LEGEND → PROOF OF WORK → GENERALIST / STRATEGIC OPERATOR."]
+
+];
+
+
+async function sleep(ms){
+
+  return new Promise(
+    r => setTimeout(r,ms)
+  );
+
+}
+
+
+async function journal(){
+
+  const log =
+    document.getElementById(
+      "log"
+    );
+
+
+  for(
+    const [type,text]
+    of entries
+  ){
+
+    const line =
+      document.createElement(
+        "div"
+      );
+
+    line.className =
+      "line " +
+      ({
+        USER:"user",
+        AI:"ai",
+        PIVOT:"pivot",
+        BUILD:"build",
+        FAIL:"fail",
+        RETURN:"return",
+        CRYSTALLIZE:"crys",
+        SHIP:"ship"
+      }[type] || "");
+
+
+    line.textContent =
+      type+"  ";
+
+
+    const body =
+      document.createElement(
+        "span"
+      );
+
+    line.appendChild(
+      body
+    );
+
+    log.appendChild(
+      line
+    );
+
+
+    for(
+      let i=0;
+      i<text.length;
+      i++
+    ){
+
+      body.textContent +=
+        text[i];
+
+      log.scrollTop =
+        log.scrollHeight;
+
+      await sleep(5);
+
+    }
+
+    await sleep(
+      type==="BUILD" ||
+      type==="FAIL" ||
+      type==="CRYSTALLIZE"
+        ? 450
+        : 230
+    );
+
+  }
+
+}
+
+
+journal();
+
+</script>
+
+</body>
+</html>
