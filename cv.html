@@ -1,0 +1,1260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CV → Product Fit</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#080807;
+  color:#e9e5dc;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{cursor:crosshair}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+#ui{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.top{
+  position:absolute;
+  top:22px;
+  left:28px;
+  right:28px;
+  display:flex;
+  justify-content:space-between;
+  color:#66635d;
+  font:10px monospace;
+  letter-spacing:.14em;
+}
+
+#stage{
+  position:absolute;
+  left:28px;
+  bottom:22px;
+  color:#66635d;
+  font:10px monospace;
+  letter-spacing:.12em;
+}
+
+#stage b{color:#e4a04e}
+
+#message{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(1000px,90vw);
+  text-align:center;
+  opacity:0;
+  transition:opacity .5s;
+}
+
+#message h1{
+  margin:0;
+  font-size:clamp(40px,7vw,90px);
+  line-height:.85;
+  letter-spacing:-.065em;
+}
+
+#message p{
+  margin:25px 0 0;
+  color:#77736c;
+  font:10px monospace;
+  letter-spacing:.15em;
+}
+
+#controls{
+  position:absolute;
+  right:28px;
+  bottom:17px;
+  display:flex;
+  gap:6px;
+  pointer-events:auto;
+}
+
+button{
+  background:#10100f;
+  border:1px solid #302e2a;
+  color:#77736b;
+  padding:9px 14px;
+  cursor:pointer;
+  font:10px monospace;
+}
+
+button:hover{
+  color:#eee;
+  border-color:#777;
+}
+
+#hint{
+  position:absolute;
+  top:56px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#393733;
+  font:9px monospace;
+  letter-spacing:.14em;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="ui">
+
+<div class="top">
+<span>CURRICULUM VITAE / STRUCTURAL REASSEMBLY</span>
+<span>2026</span>
+</div>
+
+<div id="hint">CLICK / SPACE — ADVANCE</div>
+
+<div id="message">
+<h1 id="title"></h1>
+<p id="subtitle"></p>
+</div>
+
+<div id="stage">
+STAGE <b id="stageNo">01</b> / 05
+</div>
+
+<div id="controls">
+<button id="prev">←</button>
+<button id="next">NEXT →</button>
+</div>
+
+</div>
+
+<script>
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+let W=innerWidth;
+let H=innerHeight;
+let DPR=1;
+
+function resize(){
+
+W=innerWidth;
+H=innerHeight;
+
+DPR=Math.min(devicePixelRatio||1,2);
+
+canvas.width=W*DPR;
+canvas.height=H*DPR;
+
+canvas.style.width=W+"px";
+canvas.style.height=H+"px";
+
+ctx.setTransform(DPR,0,0,DPR,0,0);
+
+}
+
+addEventListener("resize",resize);
+resize();
+
+
+/* =========================================================
+   ACTUAL CV CONTENT
+========================================================= */
+
+const cv={
+
+personal:[
+["NAME","ŠTEFAN MAJERNÍK"],
+["LOCATION","SLOVAKIA"],
+["PROFILE","INTERNATIONAL ATTORNEY / CULTURAL TECHNOLOGIST"],
+["CONTACT","AVAILABLE ON REQUEST"]
+],
+
+current:[
+["CURRENT OCCUPATION","GAME ARCHITECT / CULTURAL TECHNOLOGIST"],
+["COMPANY","METAHRY"],
+["FOCUS","GAMES · TECHNOLOGY · APPLIED METACOGNITION"]
+],
+
+experience:[
+["2025–","METAHRY","GAME ARCHITECT / CULTURAL TECHNOLOGY"],
+["2024–25","CAREER BREAK","REORIENTATION / BUILDING"],
+["2023–24","MINISTRY OF CULTURE","DIRECTOR"],
+["2020–24","MINISTRY OF CULTURE","POLICY / ADVISORY / SYSTEMS"],
+["2019","THE HAGUE / HCCH","INTERNATIONAL NEGOTIATION"],
+["2010–19","MINISTRY OF JUSTICE","PRIVATE INTERNATIONAL LAW"],
+["2009–10","PUBLIC INTERNATIONAL LAW","GOVERNMENT"],
+["2005–08","PRIVATE PRACTICE","LAW"],
+["2004","US","WORK / ADAPTATION"]
+],
+
+education:[
+["COMENIUS UNIVERSITY","LAW"],
+["ACADEMY OF FINE ARTS","CREATIVE PRACTICE"],
+["STANFORD","GAME THEORY"]
+],
+
+skills:[
+["LEGAL","PRECISION"],
+["NEGOTIATION","INTERNATIONAL / GOVERNMENT"],
+["CULTURE","CONTEXT / STAKEHOLDERS"],
+["GAMES","SYSTEMS / DESIGN"],
+["TECHNOLOGY","HTML · CSS · JS · THREE.JS"],
+["STRATEGY","CROSS-DOMAIN PROBLEM SOLVING"]
+],
+
+proof:[
+["HCCH 2019","Represented and negotiated for Slovak Republic and EU Member States"],
+["COVID","Mass-contract adoption mechanism supporting struggling creatives"],
+["CULTURE","Policy / stakeholder coordination / civic pressure"],
+["BUILD","Game studio work / startup counselling / METAHRY"]
+]
+
+};
+
+
+/* =========================================================
+   PALETTE
+========================================================= */
+
+const C={
+bg:"#080807",
+paper:"#eee9df",
+body:"#b9b4aa",
+muted:"#77736b",
+dim:"#47443f",
+line:"#292723",
+amber:"#e4a04e"
+};
+
+
+/* =========================================================
+   STAGES
+========================================================= */
+
+const stages=[
+
+["",""],
+
+[
+"THE DOCUMENT COMES APART",
+"PERSONAL INFORMATION · OCCUPATION · EXPERIENCE · EDUCATION · SKILLS"
+],
+
+[
+"THE HIERARCHY DISSOLVES",
+"THE SAME FACTS START FINDING EACH OTHER"
+],
+
+[
+"THE CV REALIGNS",
+"CHRONOLOGY → RELATIONSHIP → CAPABILITY"
+],
+
+[
+"PRODUCT FIT",
+"ONE CAPABILITY → MANY APPLICATIONS"
+]
+
+];
+
+let stage=0;
+let time=0;
+
+function setStage(n){
+
+stage=Math.max(0,Math.min(4,n));
+
+document.getElementById("stageNo").textContent=
+String(stage+1).padStart(2,"0");
+
+document.getElementById("title").textContent=
+stages[stage][0];
+
+document.getElementById("subtitle").textContent=
+stages[stage][1];
+
+document.getElementById("message").style.opacity=
+stage===0?0:1;
+
+time=0;
+
+}
+
+document.getElementById("next").onclick=()=>setStage(stage+1);
+document.getElementById("prev").onclick=()=>setStage(stage-1);
+
+canvas.onclick=()=>setStage(stage+1);
+
+addEventListener("keydown",e=>{
+
+if(e.code==="Space"||e.code==="ArrowRight"){
+e.preventDefault();
+setStage(stage+1);
+}
+
+if(e.code==="ArrowLeft"){
+e.preventDefault();
+setStage(stage-1);
+}
+
+});
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function text(s,x,y,size,color,align="left",weight="400"){
+
+ctx.fillStyle=color;
+ctx.font=`${weight} ${size}px monospace`;
+ctx.textAlign=align;
+ctx.textBaseline="middle";
+ctx.fillText(s,x,y);
+
+}
+
+function line(x1,y1,x2,y2,color=C.line){
+
+ctx.strokeStyle=color;
+ctx.lineWidth=1;
+ctx.beginPath();
+ctx.moveTo(x1,y1);
+ctx.lineTo(x2,y2);
+ctx.stroke();
+
+}
+
+function lerp(a,b,t){
+return a+(b-a)*t;
+}
+
+function ease(t){
+
+t=Math.max(0,Math.min(1,t));
+
+return t<.5
+?4*t*t*t
+:1-Math.pow(-2*t+2,3)/2;
+
+}
+
+
+/* =========================================================
+   STAGE 01
+   ACTUAL FORMAL CV
+========================================================= */
+
+function drawFormalCV(){
+
+const w=Math.min(920,W*.76);
+const h=Math.min(690,H*.78);
+
+const x=(W-w)/2;
+const y=(H-h)/2;
+
+ctx.fillStyle="#10100f";
+ctx.fillRect(x,y,w,h);
+
+ctx.strokeStyle="#35322d";
+ctx.strokeRect(x,y,w,h);
+
+
+/* HEADER */
+
+text(
+"CURRICULUM VITAE",
+x+28,
+y+28,
+10,
+C.muted
+);
+
+text(
+"ŠTEFAN MAJERNÍK",
+x+28,
+y+65,
+27,
+C.paper,
+"left",
+"700"
+);
+
+text(
+"INTERNATIONAL ATTORNEY / CULTURAL TECHNOLOGIST",
+x+w-28,
+y+65,
+9,
+C.muted,
+"right"
+);
+
+line(x+28,y+91,x+w-28,y+91);
+
+
+/* PERSONAL */
+
+let sy=y+112;
+
+section(
+"PERSONAL INFORMATION",
+cv.personal,
+x+28,
+sy,
+w-56,
+110
+);
+
+sy+=125;
+
+
+/* CURRENT */
+
+section(
+"CURRENT OCCUPATION",
+cv.current,
+x+28,
+sy,
+w-56,
+90
+);
+
+sy+=105;
+
+
+/* EXPERIENCE */
+
+text(
+"WORK EXPERIENCE",
+x+28,
+sy,
+9,
+C.muted,
+"left",
+"600"
+);
+
+sy+=24;
+
+cv.experience.forEach((r,i)=>{
+
+const yy=sy+i*24;
+
+text(r[0],x+28,yy,8,C.muted);
+
+text(r[1],x+105,yy,9,C.paper);
+
+text(r[2],x+w-28,yy,8,C.body,"right");
+
+});
+
+sy+=cv.experience.length*24+25;
+
+
+/* LOWER COLUMNS */
+
+const col=w/2-42;
+
+text(
+"EDUCATION",
+x+28,
+sy,
+9,
+C.muted,
+"left",
+"600"
+);
+
+cv.education.forEach((r,i)=>{
+text(r[0],x+28,sy+23+i*20,8,C.paper);
+text(r[1],x+180,sy+23+i*20,8,C.muted);
+});
+
+
+text(
+"SKILLS",
+x+w/2,
+sy,
+9,
+C.muted,
+"left",
+"600"
+);
+
+cv.skills.forEach((r,i)=>{
+text(r[0],x+w/2,sy+23+i*20,8,C.paper);
+text(r[1],x+w/2+105,sy+23+i*20,8,C.muted);
+});
+
+}
+
+
+/* formal section */
+
+function section(title,rows,x,y,w,h){
+
+text(title,x,y,9,C.muted,"left","600");
+
+rows.forEach((r,i)=>{
+
+const yy=y+23+i*21;
+
+text(
+r[0],
+x,
+yy,
+8,
+C.dim
+);
+
+text(
+r[1],
+x+155,
+yy,
+9,
+C.paper
+);
+
+});
+
+line(x,y+h,x+w,y+h);
+
+}
+
+
+/* =========================================================
+   STAGE 02
+   DOCUMENT DISSOLVES
+========================================================= */
+
+function drawDissolution(){
+
+const centerX=W/2;
+const centerY=H/2;
+
+
+/*
+All real CV fields become individual objects.
+*/
+
+let fragments=[];
+
+
+/* personal */
+
+cv.personal.forEach(r=>{
+fragments.push({
+label:r[1],
+type:r[0],
+group:"personal"
+});
+});
+
+
+/* current */
+
+cv.current.forEach(r=>{
+fragments.push({
+label:r[1],
+type:r[0],
+group:"current"
+});
+});
+
+
+/* experience */
+
+cv.experience.forEach(r=>{
+fragments.push({
+label:r[1],
+type:r[0],
+group:"experience"
+});
+});
+
+
+/* education */
+
+cv.education.forEach(r=>{
+fragments.push({
+label:r[0],
+type:r[1],
+group:"education"
+});
+});
+
+
+/* skills */
+
+cv.skills.forEach(r=>{
+fragments.push({
+label:r[0],
+type:r[1],
+group:"skill"
+});
+});
+
+
+const startX=W*.5;
+const startY=H*.5;
+
+fragments.forEach((f,i)=>{
+
+const angle=i*2.399;
+
+const radius=
+Math.min(W,H)*(.12+(i%5)*.035);
+
+const tx=
+centerX+
+Math.cos(angle)*radius;
+
+const ty=
+centerY+
+Math.sin(angle)*radius;
+
+const p=ease(Math.min(1,time*1.15));
+
+const x=lerp(startX,tx,p);
+const y=lerp(startY,ty,p);
+
+line(startX,startY,x,y,"#1c1b18");
+
+text(
+f.label,
+x,
+y,
+i<10?8:7,
+f.group==="skill"?C.amber:C.paper,
+"center",
+"600"
+);
+
+text(
+f.type,
+x,
+y+13,
+6,
+C.muted,
+"center"
+);
+
+});
+
+
+ctx.beginPath();
+ctx.arc(centerX,centerY,30,0,Math.PI*2);
+
+ctx.strokeStyle=C.dim;
+ctx.stroke();
+
+text(
+"CV",
+centerX,
+centerY,
+9,
+C.muted,
+"center",
+"600"
+);
+
+}
+
+
+/* =========================================================
+   STAGE 03
+   RELATIONSHIPS
+========================================================= */
+
+function drawRelationships(){
+
+const cx=W*.46;
+const cy=H*.49;
+
+
+/*
+Actual facts become capability clusters.
+*/
+
+const clusters=[
+
+{
+name:"PRECISION",
+x:cx-230,
+y:cy-100,
+sources:["PRIVATE LAW","JUSTICE","LEGAL"]
+},
+
+{
+name:"NEGOTIATION",
+x:cx-40,
+y:cy-180,
+sources:["THE HAGUE","PUBLIC LAW","GOVERNMENT"]
+},
+
+{
+name:"SYSTEMS",
+x:cx+190,
+y:cy-75,
+sources:["DIRECTOR","JUSTICE","GAMES"]
+},
+
+{
+name:"CONTEXT",
+x:cx-170,
+y:cy+125,
+sources:["FINE ARTS","CULTURE","STAKEHOLDERS"]
+},
+
+{
+name:"BUILD",
+x:cx+55,
+y:cy+175,
+sources:["METAHRY","TECHNOLOGY","GAMES"]
+},
+
+{
+name:"LEVERAGE",
+x:cx+240,
+y:cy+100,
+sources:["STRATEGY","CROSS-DOMAIN","PROBLEM SOLVING"]
+}
+
+];
+
+
+/*
+Relationship lines
+*/
+
+for(let i=0;i<clusters.length-1;i++){
+
+const a=clusters[i];
+const b=clusters[i+1];
+
+ctx.strokeStyle="#38342e";
+
+ctx.beginPath();
+
+ctx.moveTo(a.x,a.y);
+
+ctx.quadraticCurveTo(
+cx,
+cy,
+b.x,b.y
+);
+
+ctx.stroke();
+
+}
+
+
+/*
+Actual source fragments
+*/
+
+clusters.forEach((c,i)=>{
+
+const p=ease(Math.min(1,time*1.1));
+
+c.sources.forEach((s,j)=>{
+
+const angle=
+j*.9+i*.7;
+
+const r=105;
+
+const sx=
+c.x+Math.cos(angle)*r;
+
+const sy=
+c.y+Math.sin(angle)*r;
+
+const x=lerp(sx,c.x,p);
+const y=lerp(sy,c.y,p);
+
+line(sx,sy,x,y,"#25231f");
+
+text(
+s,
+x,
+y,
+7,
+C.muted,
+"center"
+);
+
+});
+
+
+ctx.beginPath();
+ctx.arc(c.x,c.y,5,0,Math.PI*2);
+
+ctx.fillStyle=C.amber;
+ctx.fill();
+
+text(
+c.name,
+c.x,
+c.y+25,
+9,
+i===5?C.amber:C.paper,
+"center",
+"600"
+);
+
+});
+
+
+/*
+Narrative shift
+*/
+
+text(
+"DATE",
+cx-310,
+cy+250,
+8,
+C.dim,
+"center"
+);
+
+text(
+"ROLE",
+cx-205,
+cy+250,
+8,
+C.dim,
+"center"
+);
+
+text(
+"EXPERIENCE",
+cx-80,
+cy+250,
+8,
+C.muted,
+"center"
+);
+
+text(
+"CAPABILITY",
+cx+70,
+cy+250,
+8,
+C.paper,
+"center",
+"600"
+);
+
+text(
+"APPLICATION",
+cx+205,
+cy+250,
+8,
+C.amber,
+"center",
+"600"
+);
+
+}
+
+
+/* =========================================================
+   STAGE 04
+   REALIGNMENT INTO CONE
+========================================================= */
+
+function drawRealignment(){
+
+const ox=W*.25;
+const oy=H*.56;
+
+const far=W*.88;
+const top=H*.17;
+const bottom=H*.83;
+
+
+/*
+Cone is born from the same capability clusters.
+*/
+
+ctx.strokeStyle="#4b463e";
+
+ctx.beginPath();
+
+ctx.moveTo(ox,oy);
+ctx.lineTo(far,top);
+
+ctx.moveTo(ox,oy);
+ctx.lineTo(far,bottom);
+
+ctx.stroke();
+
+
+/*
+Internal expanding field
+*/
+
+const rings=[.10,.25,.43,.63,.86];
+
+rings.forEach((p,i)=>{
+
+const x=lerp(ox,far,p);
+
+const t=lerp(oy,top,p);
+
+const b=lerp(oy,bottom,p);
+
+ctx.beginPath();
+
+ctx.moveTo(x,t);
+
+ctx.quadraticCurveTo(
+x+28,
+(t+b)/2,
+x,b
+);
+
+ctx.strokeStyle="#302e29";
+ctx.stroke();
+
+});
+
+
+/*
+Capability nodes entering the origin
+*/
+
+const caps=[
+"PRECISION",
+"NEGOTIATION",
+"SYSTEMS",
+"CONTEXT",
+"BUILD"
+];
+
+caps.forEach((s,i)=>{
+
+const angle=
+Math.PI*1.12+i*.22;
+
+const r=115;
+
+const sx=
+ox+Math.cos(angle)*r;
+
+const sy=
+oy+Math.sin(angle)*r;
+
+const p=ease(Math.min(1,time*1.2));
+
+const x=lerp(sx,ox+Math.cos(angle)*15,p);
+const y=lerp(sy,oy+Math.sin(angle)*15,p);
+
+text(
+s,
+x,
+y,
+7,
+p>.85?C.amber:C.muted,
+"center",
+"600"
+);
+
+});
+
+
+/*
+Labels inside application space
+*/
+
+const application=[
+"LAW",
+"CULTURE",
+"GAMES",
+"TECHNOLOGY",
+"STRATEGY"
+];
+
+application.forEach((s,i)=>{
+
+const p=.12+i*.19;
+
+const x=lerp(ox,far,p);
+
+const t=lerp(oy,top,p);
+
+const b=lerp(oy,bottom,p);
+
+text(
+s,
+x,
+(t+b)/2,
+8,
+C.muted,
+"center",
+"500"
+);
+
+});
+
+
+text(
+"ORIGIN",
+ox,
+oy-28,
+8,
+C.amber,
+"center",
+"600"
+);
+
+text(
+"ACCUMULATED CAPABILITY",
+ox+5,
+oy+38,
+8,
+C.paper,
+"center",
+"600"
+);
+
+text(
+"APPLICATION SPACE",
+far-20,
+H*.50,
+9,
+C.paper,
+"right",
+"600"
+);
+
+}
+
+
+/* =========================================================
+   STAGE 05
+   PRODUCT FIT
+========================================================= */
+
+function drawProductFit(){
+
+drawRealignment();
+
+
+/*
+Make the cone feel alive.
+*/
+
+const ox=W*.25;
+const oy=H*.56;
+const far=W*.88;
+
+
+/*
+Vector
+*/
+
+ctx.strokeStyle=C.amber;
+
+ctx.beginPath();
+
+ctx.moveTo(ox,oy);
+ctx.lineTo(far-30,oy);
+
+ctx.stroke();
+
+ctx.beginPath();
+
+ctx.moveTo(far-30,oy);
+
+ctx.lineTo(far-48,oy-7);
+
+ctx.moveTo(far-30,oy);
+
+ctx.lineTo(far-48,oy+7);
+
+ctx.stroke();
+
+
+/*
+Strategic application nodes.
+*/
+
+const nodes=[
+["LEGAL PRECISION",.30],
+["INSTITUTIONAL NEGOTIATION",.45],
+["CULTURAL SYSTEMS",.59],
+["GAME / TECH BUILD",.73],
+["STRATEGIC OPERATION",.87]
+];
+
+nodes.forEach((n,i)=>{
+
+const x=lerp(ox,far,n[1]);
+
+const spread=
+(oy-topSafe())*
+.48;
+
+const y=
+oy+
+Math.sin(i*1.7)*spread;
+
+ctx.beginPath();
+
+ctx.arc(x,y,4,0,Math.PI*2);
+
+ctx.fillStyle=C.amber;
+
+ctx.fill();
+
+text(
+n[0],
+x,
+y-17,
+7,
+C.paper,
+"center",
+"600"
+);
+
+});
+
+
+/*
+Final statement
+*/
+
+text(
+"ONE CAPABILITY",
+W*.53,
+H*.76,
+13,
+C.paper,
+"center",
+"700"
+);
+
+text(
+"MANY APPLICATIONS",
+W*.73,
+H*.76,
+13,
+C.amber,
+"center",
+"700"
+);
+
+text(
+"THE SPREAD IS LEVERAGE",
+W*.65,
+H*.13,
+9,
+C.muted,
+"center",
+"500"
+);
+
+text(
+"GENERALIST / STRATEGIC OPERATOR",
+W*.67,
+H*.51,
+15,
+C.paper,
+"center",
+"700"
+);
+
+}
+
+
+/* helper */
+
+function topSafe(){
+return H*.17;
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+ctx.clearRect(0,0,W,H);
+
+
+/* subtle document-like grid */
+
+ctx.strokeStyle="#0e0e0d";
+
+for(let x=0;x<W;x+=60){
+
+ctx.beginPath();
+ctx.moveTo(x,0);
+ctx.lineTo(x,H);
+ctx.stroke();
+
+}
+
+for(let y=0;y<H;y+=60){
+
+ctx.beginPath();
+ctx.moveTo(0,y);
+ctx.lineTo(W,y);
+ctx.stroke();
+
+}
+
+
+if(stage===0)
+drawFormalCV();
+
+if(stage===1)
+drawDissolution();
+
+if(stage===2)
+drawRelationships();
+
+if(stage===3)
+drawRealignment();
+
+if(stage===4)
+drawProductFit();
+
+
+time+=.01;
+
+requestAnimationFrame(render);
+
+}
+
+
+setStage(0);
+render();
+
+</script>
+
+</body>
+</html>
